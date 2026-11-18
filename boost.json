@@ -11,7 +11,8 @@
     "nightwatch": false,
     "packages": [
         "spatie/laravel-medialibrary",
-        "spatie/laravel-sluggable"
+        "spatie/laravel-sluggable",
+        "spatie/laravel-permission"
     ],
     "sail": false,
     "skills": [
@@ -21,6 +22,7 @@
         "testing-best-practices",
         "tailwindcss-development",
         "medialibrary-development",
+        "laravel-permission-development",
         "sluggable-development"
     ]
 }
