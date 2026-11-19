@@ -6,6 +6,7 @@
         'alt' => $product->imageAlt(),
     ])->values();
     $quote = $calculator->quote($product, 1);
+    $promo = $calculator->promo($product);
     $whatsapp = app(\App\Support\WhatsApp::class);
     $whatsappBase = $whatsapp->link($whatsapp->productMessage($product));
     $tierTable = $calculator->tierTable($product);
@@ -49,6 +50,7 @@
                 @if ($product->brand)
                     <p class="text-sm font-semibold text-brand-600">{{ $product->brand->name }}</p>
                 @endif
+                <x-product-badges :product="$product" class="mb-2" />
                 <h1 class="mt-1 text-3xl font-bold tracking-tight text-brand-900">{{ $product->name }}</h1>
                 <p class="mt-1 text-sm text-slate-500">{{ __('catalog.reference') }} {{ $product->reference }}</p>
 
@@ -58,6 +60,21 @@
 
                 <div class="mt-6 rounded-xl bg-brand-50 p-5">
                     <p class="text-sm text-slate-600">{{ __('catalog.unit_price') }}</p>
+                    @if ($promo)
+                        <div x-show="!quote.tier_applied" class="mb-1">
+                            <p class="text-sm text-slate-500"><span class="sr-only">{{ __('catalog.promo.was') }}</span> <s>{{ $promo->compareAtTtc }}</s> <span class="ml-1 font-semibold text-red-700">{{ __('catalog.badges.promo', ['percent' => $promo->percent]) }}</span></p>
+                            <p class="text-sm font-medium text-red-700">{{ __('catalog.promo.save', ['amount' => $promo->savingTtc->format()]) }}</p>
+                            @if ($promo->endsAt)
+                                <p
+                                    class="text-xs text-slate-600"
+                                    x-data="countdown({ endsAt: @js($promo->endsAt->toIso8601String()), labels: @js(['countdown' => __('catalog.promo.countdown'), 'ended' => __('catalog.promo.ended'), 'days' => 'j', 'hours' => 'h', 'minutes' => 'min']) })"
+                                >
+                                    <span x-show="!text">{{ __('catalog.promo.ends', ['date' => $promo->endsAt->isoFormat('D MMMM YYYY [à] HH:mm')]) }}</span>
+                                    <span x-cloak x-show="text" class="font-semibold" x-text="text"></span>
+                                </p>
+                            @endif
+                        </div>
+                    @endif
                     <p class="text-3xl font-bold text-brand-900"><span x-text="quote.unit_ttc.formatted">{{ $quote->unitTtc }}</span> <span class="text-base font-medium text-slate-500">{{ __('catalog.ttc') }}</span></p>
                     <p class="text-sm text-slate-600"><span x-text="quote.unit_ht.formatted">{{ $quote->unitHt }}</span> {{ __('catalog.ht') }}</p>
                     <p x-cloak x-show="quote.tier_applied" class="mt-1 text-xs font-medium text-emerald-700">{{ __('catalog.product.tier_applied') }}</p>

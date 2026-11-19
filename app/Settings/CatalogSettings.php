@@ -12,6 +12,9 @@ class CatalogSettings extends Settings
      */
     public int $best_seller_min_sales;
 
+    /** A product shows the "Nouveau" badge for this many days after it was added. 0 hides the badge. */
+    public int $new_badge_days;
+
     public static function group(): string
     {
         return 'catalog';

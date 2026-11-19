@@ -50,6 +50,18 @@ return [
         'related' => 'Produits similaires',
         'tier_applied' => 'Tarif dégressif appliqué',
     ],
+    'badges' => [
+        'promo' => '−:percent %',
+        'best_seller' => 'Top vente',
+        'new' => 'Nouveau',
+    ],
+    'promo' => [
+        'was' => 'Avant',
+        'save' => 'Économisez :amount',
+        'ends' => 'Offre jusqu\'au :date',
+        'countdown' => 'Plus que :time',
+        'ended' => 'Offre terminée',
+    ],
     'search' => [
         'placeholder' => 'Produit, référence, marque, imprimante…',
         'button' => 'Rechercher',

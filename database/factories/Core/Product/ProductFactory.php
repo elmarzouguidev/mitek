@@ -33,6 +33,7 @@ class ProductFactory extends Factory
             'weight_grams' => fake()->numberBetween(100, 5000),
             'is_active' => true,
             'is_featured' => false,
+            'is_best_seller' => false,
         ];
     }
 
@@ -44,6 +45,19 @@ class ProductFactory extends Factory
     public function featured(): static
     {
         return $this->state(['is_featured' => true]);
+    }
+
+    public function bestSeller(): static
+    {
+        return $this->state(['is_best_seller' => true]);
+    }
+
+    /**
+     * A promotion: the previous price HT in dirhams (the current price is the promotional one) and an optional end.
+     */
+    public function onPromotion(string|int|float $compareAt, \DateTimeInterface|string|null $endsAt = null): static
+    {
+        return $this->state(['compare_at_price_ht' => Money::fromDecimal($compareAt), 'promo_ends_at' => $endsAt]);
     }
 
     public function outOfStock(): static

@@ -30,12 +30,15 @@ const form = useForm({
     excerpt: props.product?.excerpt ?? '',
     description: props.product?.description ?? '',
     price_ht: props.product?.price_ht ?? '',
+    compare_at_price_ht: props.product?.compare_at_price_ht ?? '',
+    promo_ends_at: props.product?.promo_ends_at ?? '',
     vat_rate: props.product?.vat_rate ?? '',
     stock_quantity: props.product?.stock_quantity ?? 0,
     low_stock_threshold: props.product?.low_stock_threshold ?? 5,
     weight_grams: props.product?.weight_grams ?? 0,
     is_active: props.product?.is_active ?? true,
     is_featured: props.product?.is_featured ?? false,
+    is_best_seller: props.product?.is_best_seller ?? false,
     meta_title: props.product?.meta_title ?? '',
     meta_description: props.product?.meta_description ?? '',
     tiers: props.product?.tiers ?? [],
@@ -44,8 +47,8 @@ const form = useForm({
 });
 
 const tabs = [
-    { key: 'general', label: 'Général', fields: ['category_id', 'brand_id', 'reference', 'name', 'excerpt', 'description', 'is_active', 'is_featured'] },
-    { key: 'prices', label: 'Prix et paliers', fields: ['price_ht', 'vat_rate', 'tiers'] },
+    { key: 'general', label: 'Général', fields: ['category_id', 'brand_id', 'reference', 'name', 'excerpt', 'description', 'is_active', 'is_featured', 'is_best_seller'] },
+    { key: 'prices', label: 'Prix et paliers', fields: ['price_ht', 'compare_at_price_ht', 'promo_ends_at', 'vat_rate', 'tiers'] },
     { key: 'stock', label: 'Stock', fields: ['stock_quantity', 'low_stock_threshold', 'weight_grams'] },
     { key: 'images', label: 'Images', fields: ['images'] },
     { key: 'specifications', label: 'Caractéristiques', fields: ['specifications'] },
@@ -110,6 +113,7 @@ const error = (key) => form.errors[key] ?? null;
                 <div class="flex flex-col justify-end gap-2 pb-1">
                     <Checkbox v-model="form.is_active" label="Produit actif (visible sur le site)" />
                     <Checkbox v-model="form.is_featured" label="Produit vedette" />
+                    <Checkbox v-model="form.is_best_seller" label="Meilleure vente (badge « Top vente »)" />
                 </div>
                 <FormField class="sm:col-span-2" label="Description courte" for="excerpt" :error="error('excerpt')">
                     <Textarea id="excerpt" v-model="form.excerpt" :rows="2" :invalid="!!error('excerpt')" />
@@ -128,6 +132,17 @@ const error = (key) => form.errors[key] ?? null;
                     </FormField>
                     <FormField label="TVA (%)" for="vat_rate" :hint="`Laissez vide pour le taux par défaut (${defaultVatRate} %).`" :error="error('vat_rate')">
                         <TextInput id="vat_rate" v-model="form.vat_rate" type="number" :invalid="!!error('vat_rate')" />
+                    </FormField>
+                </div>
+            </Card>
+
+            <Card title="Promotion" description="Le prix unitaire ci-dessus est le prix promotionnel. Indiquez l'ancien prix pour l'afficher barré, avec le pourcentage d'économie.">
+                <div class="grid gap-4 sm:grid-cols-2">
+                    <FormField label="Ancien prix HT (DH)" for="compare_at_price_ht" hint="Doit être supérieur au prix unitaire. Laissez vide : pas de promotion." :error="error('compare_at_price_ht')">
+                        <TextInput id="compare_at_price_ht" v-model="form.compare_at_price_ht" type="number" :invalid="!!error('compare_at_price_ht')" />
+                    </FormField>
+                    <FormField label="Fin de la promotion (facultatif)" for="promo_ends_at" hint="Après cette date, le prix barré et le badge disparaissent : pensez à remettre le prix normal." :error="error('promo_ends_at')">
+                        <TextInput id="promo_ends_at" v-model="form.promo_ends_at" type="datetime-local" :invalid="!!error('promo_ends_at')" />
                     </FormField>
                 </div>
             </Card>

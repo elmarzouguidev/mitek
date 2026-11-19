@@ -76,7 +76,7 @@ const announcementForm = useForm({
 
 const claimsForm = useForm({ ...props.claims.values });
 
-const catalogForm = useForm({ best_seller_min_sales: props.catalog.best_seller_min_sales });
+const catalogForm = useForm({ best_seller_min_sales: props.catalog.best_seller_min_sales, new_badge_days: props.catalog.new_badge_days });
 
 const paymentForm = useForm({
     bank_name: props.payment.bank_name,
@@ -326,6 +326,9 @@ function toggleDay(day) {
             <Card title="Catalogue" description="Le badge « meilleure vente » se règle produit par produit ; il peut aussi être attribué automatiquement.">
                 <FormField label="Ventes minimales sur 90 jours" for="best_seller_min_sales" hint="0 désactive l'attribution automatique : seul le réglage manuel s'applique." :error="catalogForm.errors.best_seller_min_sales">
                     <TextInput id="best_seller_min_sales" v-model="catalogForm.best_seller_min_sales" type="number" :invalid="!!catalogForm.errors.best_seller_min_sales" />
+                </FormField>
+                <FormField class="mt-4" label="Badge « Nouveau » (jours)" for="new_badge_days" hint="Un produit affiche « Nouveau » pendant ce nombre de jours après son ajout. 0 masque le badge." :error="catalogForm.errors.new_badge_days">
+                    <TextInput id="new_badge_days" v-model="catalogForm.new_badge_days" type="number" :invalid="!!catalogForm.errors.new_badge_days" />
                 </FormField>
                 <template #footer>
                     <Button type="submit" :processing="catalogForm.processing">Enregistrer</Button>

@@ -45,6 +45,9 @@ class Product extends Model implements HasMedia
     {
         return [
             'price_ht' => MoneyCast::class,
+            'compare_at_price_ht' => MoneyCast::class,
+            'promo_ends_at' => 'datetime',
+            'is_best_seller' => 'boolean',
             'vat_rate' => 'integer',
             'stock_quantity' => 'integer',
             'low_stock_threshold' => 'integer',
@@ -52,6 +55,37 @@ class Product extends Model implements HasMedia
             'is_active' => 'boolean',
             'is_featured' => 'boolean',
         ];
+    }
+
+    /**
+     * Products with a running promotion: a "compare at" price above the current one, not yet expired.
+     *
+     * @param  Builder<Product>  $query
+     * @return Builder<Product>
+     */
+    public function scopeOnPromotion(Builder $query): Builder
+    {
+        return $query->whereNotNull('products.compare_at_price_ht')
+            ->whereColumn('products.compare_at_price_ht', '>', 'products.price_ht')
+            ->where(fn (Builder $ends) => $ends->whereNull('products.promo_ends_at')->orWhere('products.promo_ends_at', '>', now()));
+    }
+
+    /**
+     * @param  Builder<Product>  $query
+     * @return Builder<Product>
+     */
+    public function scopeBestSellers(Builder $query): Builder
+    {
+        return $query->where('products.is_best_seller', true);
+    }
+
+    /**
+     * @param  Builder<Product>  $query
+     * @return Builder<Product>
+     */
+    public function scopeAddedWithin(Builder $query, int $days): Builder
+    {
+        return $query->where('products.created_at', '>=', now()->subDays($days));
     }
 
     /**

@@ -244,12 +244,12 @@ describe('delivery calendar', function () {
 
 describe('catalogue', function () {
     it('saves the best-seller threshold', function () {
-        $this->actingAs($this->admin)->put(route('admin.settings.catalog'), ['best_seller_min_sales' => 25])->assertSessionHasNoErrors();
+        $this->actingAs($this->admin)->put(route('admin.settings.catalog'), ['best_seller_min_sales' => 25, 'new_badge_days' => 30])->assertSessionHasNoErrors();
 
         expect(app(CatalogSettings::class)->best_seller_min_sales)->toBe(25);
     });
 
     it('validates the threshold', function (mixed $value) {
-        $this->actingAs($this->admin)->put(route('admin.settings.catalog'), ['best_seller_min_sales' => $value])->assertSessionHasErrors('best_seller_min_sales');
+        $this->actingAs($this->admin)->put(route('admin.settings.catalog'), ['best_seller_min_sales' => $value, 'new_badge_days' => 30])->assertSessionHasErrors('best_seller_min_sales');
     })->with(['negative' => -1, 'text' => 'many', 'empty' => '', 'huge' => 1000000]);
 });

@@ -6,6 +6,7 @@ use App\Models\Core\Product\Product;
 use App\Models\Core\Product\ProductPriceTier;
 use App\Settings\GeneralSettings;
 use App\Support\Money;
+use Carbon\CarbonImmutable;
 
 /**
  * Single source of truth for product prices: used by the catalog, the product page and (Phase 3) the cart.
@@ -60,6 +61,34 @@ class PriceCalculator
             lineVat: $lineVat,
             lineTtc: $lineHt->plus($lineVat),
             tierApplied: $this->applicableTier($product, $quantity) !== null,
+        );
+    }
+
+    /**
+     * The running promotion of a product, or null. It compares the previous price with the base unit price
+     * (quantity tiers are separate B2B prices and never carry a struck-through price).
+     */
+    public function promo(Product $product): ?Promo
+    {
+        $compareAt = $product->compare_at_price_ht;
+
+        if ($compareAt === null || ! $compareAt->isGreaterThan($product->price_ht)) {
+            return null;
+        }
+
+        if ($product->promo_ends_at !== null && $product->promo_ends_at->isPast()) {
+            return null;
+        }
+
+        $vatRate = $this->vatRate($product);
+        $compareAtTtc = $this->withVat($compareAt, $vatRate);
+
+        return new Promo(
+            compareAtHt: $compareAt,
+            compareAtTtc: $compareAtTtc,
+            savingTtc: $compareAtTtc->minus($this->unitPriceTtc($product)),
+            percent: max(1, (int) round(($compareAt->cents - $product->price_ht->cents) / $compareAt->cents * 100)),
+            endsAt: $product->promo_ends_at === null ? null : CarbonImmutable::instance($product->promo_ends_at),
         );
     }
 

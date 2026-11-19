@@ -103,6 +103,20 @@ class StructuredData
     {
         $image = $product->getFirstMediaUrl(Product::GALLERY, 'large');
 
+        $offer = [
+            '@type' => 'Offer',
+            'url' => route('products.show', $product->slug),
+            'priceCurrency' => 'MAD',
+            'price' => number_format($this->prices->unitPriceTtc($product)->toDecimal(), 2, '.', ''),
+            'availability' => $product->isInStock() ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+            'itemCondition' => 'https://schema.org/NewCondition',
+            'seller' => ['@id' => url('/').'#organization'],
+        ];
+
+        if ($endsAt = $this->prices->promo($product)?->endsAt) {
+            $offer['priceValidUntil'] = $endsAt->toDateString();
+        }
+
         return array_filter([
             '@context' => self::CONTEXT,
             '@type' => 'Product',
@@ -111,15 +125,7 @@ class StructuredData
             'description' => Seo::description($product->excerpt ?: $product->description),
             'image' => $image ?: null,
             'brand' => $product->brand ? ['@type' => 'Brand', 'name' => $product->brand->name] : null,
-            'offers' => [
-                '@type' => 'Offer',
-                'url' => route('products.show', $product->slug),
-                'priceCurrency' => 'MAD',
-                'price' => number_format($this->prices->unitPriceTtc($product)->toDecimal(), 2, '.', ''),
-                'availability' => $product->isInStock() ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
-                'itemCondition' => 'https://schema.org/NewCondition',
-                'seller' => ['@id' => url('/').'#organization'],
-            ],
+            'offers' => $offer,
         ]);
     }
 

@@ -3,12 +3,16 @@
 @php
     $calculator = app(\App\Services\Core\Product\PriceCalculator::class);
     $whatsappLink = app(\App\Support\WhatsApp::class)->productLink($product);
+    $promo = $calculator->promo($product);
 @endphp
 
 <article class="group flex flex-col overflow-hidden rounded-xl bg-white ring-1 ring-slate-200 transition hover:ring-brand-300">
-    <a href="{{ route('products.show', $product->slug) }}" class="block aspect-square bg-slate-50">
-        <x-product-image :product="$product" conversion="card" class="size-full object-contain p-4" loading="lazy" />
-    </a>
+    <div class="relative">
+        <a href="{{ route('products.show', $product->slug) }}" class="block aspect-square bg-slate-50" tabindex="-1" aria-hidden="true">
+            <x-product-image :product="$product" conversion="card" class="size-full object-contain p-4" loading="lazy" />
+        </a>
+        <x-product-badges :product="$product" :limit="2" class="pointer-events-none absolute left-2 top-2 flex-col items-start" />
+    </div>
     <div class="flex flex-1 flex-col p-4">
         @if ($product->brand)
             <p class="text-xs font-medium text-brand-600">{{ $product->brand->name }}</p>
@@ -20,7 +24,10 @@
 
         <div class="mt-auto flex items-end justify-between gap-2 pt-4">
             <div>
-                <p class="text-lg font-bold text-brand-900">{{ $calculator->unitPriceTtc($product) }} <span class="text-xs font-medium text-slate-500">{{ __('catalog.ttc') }}</span></p>
+                @if ($promo)
+                    <p class="text-xs text-slate-500"><span class="sr-only">{{ __('catalog.promo.was') }}</span> <s>{{ $promo->compareAtTtc }}</s></p>
+                @endif
+                <p class="text-lg font-bold {{ $promo ? 'text-red-700' : 'text-brand-900' }}">{{ $calculator->unitPriceTtc($product) }} <span class="text-xs font-medium text-slate-500">{{ __('catalog.ttc') }}</span></p>
                 <p class="text-xs text-slate-500">{{ $calculator->unitPriceHt($product) }} {{ __('catalog.ht') }}</p>
             </div>
             <x-stock-badge :product="$product" />

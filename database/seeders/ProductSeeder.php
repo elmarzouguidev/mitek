@@ -36,6 +36,16 @@ class ProductSeeder extends Seeder
         'Autres consommables & Hygiène' => [252, 231, 243],
     ];
 
+    /**
+     * DEMO promotions: SKU => [previous price as a multiple of the current one, days until the offer ends or null].
+     *
+     * @var array<string, array{0: float, 1: int|null}>
+     */
+    private const DEMO_PROMOTIONS = ['CF380A' => [1.25, 6], 'TN-2420' => [1.15, null], 'CRG-725' => [1.2, 2]];
+
+    /** DEMO "Top vente" flags. */
+    private const DEMO_BEST_SELLERS = ['CF380A', 'TZE-551', '55B5000'];
+
     public function run(): void
     {
         $this->call([CategorySeeder::class, BrandSeeder::class]);
@@ -80,6 +90,22 @@ class ProductSeeder extends Seeder
 
             $this->attachPlaceholder($product, $category->parent?->name ?? $category->name, $item['sku']);
         }
+
+        $this->applyDemoPromotions();
+    }
+
+    private function applyDemoPromotions(): void
+    {
+        foreach (self::DEMO_PROMOTIONS as $sku => [$factor, $days]) {
+            $product = Product::where('reference', $sku)->whereNull('compare_at_price_ht')->first();
+
+            $product?->update([
+                'compare_at_price_ht' => Money::fromDecimal(round($product->price_ht->toDecimal() * $factor)),
+                'promo_ends_at' => $days === null ? null : now()->addDays($days)->setTime(23, 59),
+            ]);
+        }
+
+        Product::whereIn('reference', self::DEMO_BEST_SELLERS)->update(['is_best_seller' => true]);
     }
 
     private function attachPlaceholder(Product $product, string $family, string $label): void

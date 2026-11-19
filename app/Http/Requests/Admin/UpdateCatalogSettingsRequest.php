@@ -18,6 +18,7 @@ class UpdateCatalogSettingsRequest extends FormRequest
     {
         return [
             'best_seller_min_sales' => ['required', 'integer', 'min:0', 'max:100000'],
+            'new_badge_days' => ['required', 'integer', 'min:0', 'max:365'],
         ];
     }
 }
