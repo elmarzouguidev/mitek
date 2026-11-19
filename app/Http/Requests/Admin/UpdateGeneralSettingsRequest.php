@@ -25,6 +25,9 @@ class UpdateGeneralSettingsRequest extends FormRequest
             'address' => ['required', 'string', 'max:255'],
             'maps_embed_url' => ['nullable', 'url:https', 'max:1000'],
             'vat_rate' => ['required', 'integer', 'between:0,100'],
+            'ice' => ['nullable', 'digits:15'],
+            'if_number' => ['nullable', 'string', 'max:30'],
+            'rc_number' => ['nullable', 'string', 'max:30'],
         ];
     }
 }

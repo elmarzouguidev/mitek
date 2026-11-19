@@ -26,6 +26,13 @@ class GeneralSettings extends Settings
     /** VAT percentage applied to HT prices. */
     public int $vat_rate;
 
+    /** TODO: Mitek's own ICE / IF / RC (printed on invoices) are not provided in Mitek.md. */
+    public ?string $ice;
+
+    public ?string $if_number;
+
+    public ?string $rc_number;
+
     public static function group(): string
     {
         return 'general';

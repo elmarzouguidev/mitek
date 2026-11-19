@@ -20,6 +20,9 @@ const generalForm = useForm({
     address: props.general.address,
     maps_embed_url: props.general.maps_embed_url ?? '',
     vat_rate: props.general.vat_rate,
+    ice: props.general.ice ?? '',
+    if_number: props.general.if_number ?? '',
+    rc_number: props.general.rc_number ?? '',
 });
 
 const paymentForm = useForm({
@@ -66,6 +69,15 @@ const shippingForm = useForm({
                     </FormField>
                     <FormField label="TVA (%)" for="vat_rate" :error="generalForm.errors.vat_rate">
                         <TextInput id="vat_rate" type="number" v-model="generalForm.vat_rate" :invalid="!!generalForm.errors.vat_rate" />
+                    </FormField>
+                    <FormField label="ICE (15 chiffres)" for="ice" hint="Imprimé sur les factures." :error="generalForm.errors.ice">
+                        <TextInput id="ice" v-model="generalForm.ice" :invalid="!!generalForm.errors.ice" />
+                    </FormField>
+                    <FormField label="Identifiant fiscal (IF)" for="if_number" :error="generalForm.errors.if_number">
+                        <TextInput id="if_number" v-model="generalForm.if_number" :invalid="!!generalForm.errors.if_number" />
+                    </FormField>
+                    <FormField label="Registre de commerce (RC)" for="rc_number" :error="generalForm.errors.rc_number">
+                        <TextInput id="rc_number" v-model="generalForm.rc_number" :invalid="!!generalForm.errors.rc_number" />
                     </FormField>
                     <FormField class="sm:col-span-2" label="Adresse" for="address" :error="generalForm.errors.address">
                         <TextInput id="address" v-model="generalForm.address" :invalid="!!generalForm.errors.address" />
