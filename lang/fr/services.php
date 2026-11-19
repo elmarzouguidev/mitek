@@ -1,0 +1,50 @@
+<?php
+
+return [
+    'statuses' => [
+        'new' => 'Nouvelle',
+        'contacted' => 'Contacté',
+        'quote_sent' => 'Devis envoyé',
+        'done' => 'Traitée',
+        'closed' => 'Clôturée',
+    ],
+    'interventions' => [
+        'on_site' => 'Sur site',
+        'remote' => 'À distance',
+    ],
+    'urgencies' => [
+        'planned' => 'Planifiée',
+        'soon' => 'Rapide',
+        'urgent' => 'Urgente',
+    ],
+    'sent' => 'Demande :reference envoyée. Notre équipe vous recontacte rapidement.',
+    'index' => [
+        'title' => 'Services informatiques',
+        'kicker' => 'Services informatiques',
+        'heading' => 'Des solutions techniques sur mesure pour votre entreprise',
+        'intro' => 'Nos experts vous accompagnent : maintenance, réseaux, cybersécurité, cloud, récupération de données, parc informatique, PC sur mesure et conseil.',
+        'description' => 'Maintenance informatique, réseaux et Wi-Fi, cybersécurité, cloud pour PME, récupération de données, PC sur mesure et audit : demandez votre service.',
+        'discover' => 'Découvrir',
+        'cta_title' => 'Un besoin précis ?',
+        'cta_text' => 'Décrivez-nous votre situation : nous vous répondons avec une solution adaptée.',
+        'cta_button' => 'Nous contacter',
+    ],
+    'show' => [
+        'includes' => 'Ce service comprend',
+        'other' => 'Autres services',
+        'form_title' => 'Demander ce service',
+        'form_intro' => 'Dites-nous ce dont vous avez besoin : nous vous recontactons.',
+        'service' => 'Service',
+        'name' => 'Nom complet',
+        'company' => 'Entreprise (facultatif)',
+        'phone' => 'Téléphone',
+        'email' => 'Adresse email',
+        'city' => 'Ville',
+        'intervention' => 'Intervention',
+        'urgency' => 'Urgence',
+        'message' => 'Votre besoin',
+        'message_hint' => 'Matériel concerné, nombre de postes, problème rencontré…',
+        'submit' => 'Envoyer la demande',
+        'faq' => 'Questions fréquentes',
+    ],
+];

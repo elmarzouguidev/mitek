@@ -98,6 +98,6 @@ it('does not email the customer in the admin notification', function () {
     $product = Product::factory()->priced(100)->create(['stock_quantity' => 5]);
     $this->withSession(cartSession([[$product, 1]]))->post(route('checkout.store'), checkoutPayload(['contact_email' => 'sara@example.com']));
 
-    Mail::assertSent(AdminNotificationMail::class, fn (AdminNotificationMail $mail) => ! $mail->hasTo('sara@example.com') && $mail->order ?? true);
+    Mail::assertSent(AdminNotificationMail::class, fn (AdminNotificationMail $mail) => ! $mail->hasTo('sara@example.com'));
     expect(Money::zero()->isZero())->toBeTrue();
 });

@@ -1,4 +1,4 @@
-@props(['product'])
+@props(['product', 'level' => 3])
 
 @php($calculator = app(\App\Services\Core\Product\PriceCalculator::class))
 
@@ -10,9 +10,9 @@
         @if ($product->brand)
             <p class="text-xs font-medium text-brand-600">{{ $product->brand->name }}</p>
         @endif
-        <h3 class="mt-0.5 text-sm font-semibold text-slate-900">
+        <h{{ $level }} class="mt-0.5 text-sm font-semibold text-slate-900">
             <a href="{{ route('products.show', $product->slug) }}" class="hover:text-brand-700">{{ $product->name }}</a>
-        </h3>
+        </h{{ $level }}>
         <p class="mt-0.5 text-xs text-slate-500">{{ __('catalog.reference') }} {{ $product->reference }}</p>
 
         <div class="mt-auto flex items-end justify-between gap-2 pt-4">

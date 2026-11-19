@@ -3,13 +3,16 @@
 namespace App\Listeners;
 
 use App\Enums\OrderStatus;
+use App\Events\ContactMessageReceived;
 use App\Events\OrderPlaced;
 use App\Events\OrderStatusChanged;
 use App\Events\QuoteRequested;
+use App\Events\ServiceRequested;
 use App\Mail\AdminNotificationMail;
 use App\Settings\GeneralSettings;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 /**
  * Tells the team (the "admin notification email" setting) when something needs handling:
@@ -70,6 +73,38 @@ class NotifyAdmin implements ShouldQueue
             ],
             route('admin.quotes.show', $quote),
             'Répondre au devis',
+        ));
+    }
+
+    public function handleServiceRequested(ServiceRequested $event): void
+    {
+        $request = $event->request;
+
+        $this->send(new AdminNotificationMail(
+            __('Nouvelle demande de service :reference', ['reference' => $request->reference]),
+            [
+                'Service : '.$request->service_title,
+                'Client : '.($request->company_name ?: $request->contact_name).' ('.$request->email.', '.$request->phone.')',
+                'Intervention : '.$request->intervention->label().', urgence : '.$request->urgency->label(),
+                'Ville : '.$request->city,
+            ],
+            route('admin.service-requests.show', $request),
+            'Traiter la demande',
+        ));
+    }
+
+    public function handleContactMessageReceived(ContactMessageReceived $event): void
+    {
+        $message = $event->message;
+
+        $this->send(new AdminNotificationMail(
+            __('Nouveau message : :subject', ['subject' => $message->subject]),
+            [
+                'De : '.$message->name.' ('.$message->email.')',
+                Str::limit($message->message, 200),
+            ],
+            route('admin.messages.show', $message),
+            'Lire le message',
         ));
     }
 

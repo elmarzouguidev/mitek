@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\PageKey;
 use App\Http\Controllers\Account\AddressController;
 use App\Http\Controllers\Account\DashboardController as AccountDashboardController;
 use App\Http\Controllers\Account\OrderController as AccountOrderController;
@@ -14,18 +15,39 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Storefront\CartController;
 use App\Http\Controllers\Storefront\CategoryController;
 use App\Http\Controllers\Storefront\CheckoutController;
+use App\Http\Controllers\Storefront\ContactController;
 use App\Http\Controllers\Storefront\CreditNoteController;
+use App\Http\Controllers\Storefront\FaqController;
 use App\Http\Controllers\Storefront\InvoiceController;
 use App\Http\Controllers\Storefront\OrderController;
+use App\Http\Controllers\Storefront\PageController;
 use App\Http\Controllers\Storefront\ProductController;
 use App\Http\Controllers\Storefront\QuoteController;
+use App\Http\Controllers\Storefront\RobotsController;
 use App\Http\Controllers\Storefront\SearchController;
+use App\Http\Controllers\Storefront\ServiceController;
+use App\Http\Controllers\Storefront\SitemapController;
 use App\Http\Middleware\EnsureOrderAccess;
 use App\Http\Middleware\EnsureQuoteAccess;
 use Illuminate\Support\Facades\Route;
 use Spatie\Honeypot\ProtectAgainstSpam;
 
 Route::get('/', HomeController::class)->name('home');
+
+Route::get('services', [ServiceController::class, 'index'])->name('services.index');
+Route::post('services/demande', [ServiceController::class, 'request'])->middleware([ProtectAgainstSpam::class, 'throttle:10,1'])->name('services.request');
+Route::get('services/{slug}', [ServiceController::class, 'show'])->where('slug', '[a-z0-9-]+')->name('services.show');
+
+foreach (PageKey::cases() as $pageKey) {
+    Route::get($pageKey->slug(), [PageController::class, 'show'])->defaults('key', $pageKey->value)->name('pages.'.$pageKey->value);
+}
+
+Route::get('faq', [FaqController::class, 'index'])->name('faq');
+Route::get('contact', [ContactController::class, 'show'])->name('contact');
+Route::post('contact', [ContactController::class, 'store'])->middleware([ProtectAgainstSpam::class, 'throttle:10,1'])->name('contact.store');
+
+Route::get('robots.txt', RobotsController::class)->name('robots');
+Route::get('sitemap.xml', SitemapController::class)->name('sitemap');
 
 Route::get('categories/{slug}', [CategoryController::class, 'show'])->where('slug', '[a-z0-9-]+')->name('categories.show');
 Route::get('produit/{slug}', [ProductController::class, 'show'])->where('slug', '[a-z0-9-]+')->name('products.show');

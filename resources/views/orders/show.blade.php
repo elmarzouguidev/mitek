@@ -6,7 +6,7 @@
     $lastRejected = $order->payments->first(fn ($payment) => $payment->status === PaymentStatus::Rejected);
 @endphp
 
-<x-layouts.app :title="__('orders.show.title', ['reference' => $order->reference])">
+<x-layouts.app robots="noindex,nofollow" :title="__('orders.show.title', ['reference' => $order->reference])">
     <div class="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
         <header class="flex flex-wrap items-start justify-between gap-4">
             <div>

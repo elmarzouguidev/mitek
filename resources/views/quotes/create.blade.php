@@ -2,7 +2,7 @@
     $input = 'mt-1 block w-full rounded-lg border-0 px-3 py-2 text-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-brand-600';
 @endphp
 
-<x-layouts.app :title="__('quotes.create.title')">
+<x-layouts.app robots="noindex,nofollow" :title="__('quotes.create.title')">
     <div class="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
         <h1 class="text-3xl font-bold tracking-tight text-brand-900">{{ __('quotes.create.title') }}</h1>
         <p class="mt-2 text-slate-600">{{ __('quotes.create.intro') }}</p>

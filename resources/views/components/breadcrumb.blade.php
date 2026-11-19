@@ -1,5 +1,7 @@
 @props(['items'])
 
+<script type="application/ld+json">{!! \App\Support\Seo::json(app(\App\Services\Seo\StructuredData::class)->breadcrumbs($items)) !!}</script>
+
 <nav aria-label="{{ __('catalog.breadcrumb') }}" class="text-sm text-slate-500">
     <ol class="flex flex-wrap items-center gap-x-2 gap-y-1">
         <li><a href="{{ route('home') }}" class="hover:text-brand-700">{{ __('catalog.home') }}</a></li>

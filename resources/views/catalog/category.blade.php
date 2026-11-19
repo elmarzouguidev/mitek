@@ -7,7 +7,7 @@
     $hasActiveFilters = $filters->subcategorySlug || $filters->brandSlugs || $filters->minPriceDh !== null || $filters->maxPriceDh !== null || $filters->inStockOnly;
 @endphp
 
-<x-layouts.app :title="$category->meta_title ?: $category->name" :description="$category->meta_description ?: \Illuminate\Support\Str::limit(strip_tags((string) $category->description), 155)">
+<x-layouts.app :title="$category->meta_title ?: $category->name" :description="$category->meta_description ?: \App\Support\Seo::description($category->description) ?: __('catalog.category_description', ['name' => $category->name])" :canonical="$seo['canonical']" :robots="$seo['robots']">
     <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8" x-data="{ drawer: false }">
         <x-breadcrumb :items="$crumbs" />
 
@@ -23,7 +23,7 @@
         </div>
 
         <div class="mt-6 grid gap-8 lg:grid-cols-[16rem_1fr]">
-            <aside :class="drawer ? 'max-lg:fixed max-lg:inset-0 max-lg:z-50 max-lg:overflow-y-auto max-lg:bg-white max-lg:p-6' : ''" aria-label="{{ __('catalog.filters') }}">
+            <aside :class="drawer ? 'max-lg:fixed max-lg:inset-0 max-lg:z-50 max-lg:overflow-y-auto max-lg:bg-white max-lg:p-6' : 'max-lg:hidden'" aria-label="{{ __('catalog.filters') }}">
                 <div class="mb-4 flex items-center justify-between lg:hidden" x-cloak x-show="drawer">
                     <p class="text-lg font-semibold">{{ __('catalog.filters') }}</p>
                     <button type="button" class="rounded-lg p-2 hover:bg-slate-100" aria-label="Fermer" @click="drawer = false">✕</button>
@@ -90,7 +90,7 @@
                 @else
                     <div class="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
                         @foreach ($products as $product)
-                            <x-product-card :product="$product" />
+                            <x-product-card :product="$product" :level="2" />
                         @endforeach
                     </div>
 

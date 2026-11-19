@@ -1,4 +1,4 @@
-<x-layouts.app :title="__('app.auth.register_title')">
+<x-layouts.app robots="noindex,nofollow" :title="__('app.auth.register_title')">
     <x-auth-card :title="__('app.auth.register_title')">
         <form method="POST" action="{{ route('register') }}" class="space-y-4">
             @csrf

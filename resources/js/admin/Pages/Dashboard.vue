@@ -27,6 +27,16 @@ defineProps({
             <p :class="stats.new_quotes ? 'text-brand-700' : 'text-slate-900'" class="mt-2 text-3xl font-semibold tracking-tight">{{ stats.new_quotes }}</p>
             <p class="mt-1 text-xs text-slate-500">demandes sans réponse</p>
         </Link>
+        <Link :href="route('admin.service-requests.index', { status: 'new' })" class="block rounded-xl bg-white p-5 shadow-xs ring-1 ring-slate-200 hover:ring-brand-300">
+            <p class="text-sm font-medium text-slate-500">Demandes de service</p>
+            <p :class="stats.new_service_requests ? 'text-brand-700' : 'text-slate-900'" class="mt-2 text-3xl font-semibold tracking-tight">{{ stats.new_service_requests }}</p>
+            <p class="mt-1 text-xs text-slate-500">nouvelles, à traiter</p>
+        </Link>
+        <Link :href="route('admin.messages.index', { status: 'unread' })" class="block rounded-xl bg-white p-5 shadow-xs ring-1 ring-slate-200 hover:ring-brand-300">
+            <p class="text-sm font-medium text-slate-500">Messages non lus</p>
+            <p :class="stats.unread_messages ? 'text-brand-700' : 'text-slate-900'" class="mt-2 text-3xl font-semibold tracking-tight">{{ stats.unread_messages }}</p>
+            <p class="mt-1 text-xs text-slate-500">formulaire de contact</p>
+        </Link>
         <StatCard label="Commandes à traiter" :value="stats.to_process" />
         <StatCard label="Chiffre d'affaires (30 jours)" :value="stats.revenue_30_days" />
         <StatCard label="Clients" :value="stats.customers" />

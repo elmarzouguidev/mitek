@@ -51,7 +51,7 @@ return [
         'tier_applied' => 'Tarif dégressif appliqué',
     ],
     'search' => [
-        'placeholder' => 'Rechercher un produit, une référence, une marque, un modèle d\'imprimante…',
+        'placeholder' => 'Produit, référence, marque, imprimante…',
         'button' => 'Rechercher',
         'title' => 'Recherche',
         'results_for' => 'Résultats pour « :term »',
@@ -59,5 +59,6 @@ return [
         'suggestions' => 'Suggestions',
         'see_all' => 'Voir tous les résultats',
     ],
+    'category_description' => 'Découvrez notre sélection :name : prix HT et TTC, tarifs dégressifs pour les entreprises, livraison partout au Maroc.',
     'placeholder_image' => 'Image à venir',
 ];

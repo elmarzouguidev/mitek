@@ -2,6 +2,12 @@
 
 namespace App\Providers;
 
+use App\Jobs\RegenerateSitemap;
+use App\Models\Core\Content\FaqItem;
+use App\Models\Core\Content\Page;
+use App\Models\Core\Product\Category;
+use App\Models\Core\Product\Product;
+use App\Models\Core\Service\Service;
 use App\Services\Core\Cart\CartService;
 use App\Services\Core\Product\CatalogMenu;
 use App\Settings\GeneralSettings;
@@ -35,6 +41,7 @@ class AppServiceProvider extends ServiceProvider
         $this->configurePasswordValidation();
         $this->configureDates();
         $this->configureViewComposers();
+        $this->configureSitemapRegeneration();
 
         // $this->configureLoadMigrationsFrom();
     }
@@ -63,6 +70,21 @@ class AppServiceProvider extends ServiceProvider
     private function configureDates(): void
     {
         Date::use(CarbonImmutable::class);
+    }
+
+    /**
+     * The sitemap is rebuilt (queued, de-duplicated) whenever public content is created, removed or
+     * published/unpublished/renamed.
+     */
+    private function configureSitemapRegeneration(): void
+    {
+        $dispatch = fn () => RegenerateSitemap::dispatch();
+
+        foreach ([Product::class, Category::class, Service::class, Page::class, FaqItem::class] as $model) {
+            $model::created($dispatch);
+            $model::updated(fn (Model $updated) => $updated->wasChanged(['is_active', 'is_published', 'slug']) ? $dispatch() : null);
+            $model::deleted($dispatch);
+        }
     }
 
     /** The public site's header and footer read the general settings. */

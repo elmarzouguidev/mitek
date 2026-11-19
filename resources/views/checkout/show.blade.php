@@ -3,7 +3,7 @@
     $initialPayment = old('payment_method', '');
 @endphp
 
-<x-layouts.app :title="__('orders.checkout.title')">
+<x-layouts.app robots="noindex,nofollow" :title="__('orders.checkout.title')">
     <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8"
          x-data="checkout({ url: '{{ route('checkout.estimate') }}', city: @js(old('shipping_city', $prefill['shipping_city'] ?? '')), carrier: @js(old('carrier_mode', 'mitek')), payment: @js($initialPayment), isCompany: @js((bool) old('is_company', $prefill['is_company'] ?? false)) })">
         <h1 class="text-3xl font-bold tracking-tight text-brand-900">{{ __('orders.checkout.title') }}</h1>

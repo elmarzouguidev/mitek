@@ -1,8 +1,12 @@
-@props(['title' => null, 'description' => null])
+@props(['title' => null, 'description' => null, 'canonical' => null, 'robots' => null, 'image' => null, 'ogType' => 'website', 'schemas' => []])
 
 @php
     $pageTitle = $title ? $title.' · '.$site->site_name : $site->site_name.' · '.__('app.home.title');
     $whatsappUrl = $site->whatsapp ? 'https://wa.me/'.$site->whatsapp : null;
+    $metaDescription = \App\Support\Seo::limit($description ?: __('app.home.welcome'));
+    $canonicalUrl = $canonical ?: url()->current();
+    $shareImage = $image ?: asset('images/share-default.png');
+    $structured = app(\App\Services\Seo\StructuredData::class);
 @endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
@@ -10,14 +14,25 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ $pageTitle }}</title>
-    @if ($description)
-        <meta name="description" content="{{ $description }}">
-    @endif
-    <link rel="canonical" href="{{ url()->current() }}">
+    <meta name="description" content="{{ $metaDescription }}">
+    <meta name="robots" content="{{ $robots ?: 'index,follow' }}">
+    <link rel="canonical" href="{{ $canonicalUrl }}">
+    <meta property="og:type" content="{{ $ogType }}">
     <meta property="og:title" content="{{ $pageTitle }}">
+    <meta property="og:description" content="{{ $metaDescription }}">
+    <meta property="og:url" content="{{ $canonicalUrl }}">
+    <meta property="og:image" content="{{ $shareImage }}">
     <meta property="og:site_name" content="{{ $site->site_name }}">
     <meta property="og:locale" content="fr_MA">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ $pageTitle }}">
+    <meta name="twitter:description" content="{{ $metaDescription }}">
+    <meta name="twitter:image" content="{{ $shareImage }}">
     <link rel="icon" href="{{ asset('favicon.ico') }}">
+    <script type="application/ld+json">{!! \App\Support\Seo::json($structured->organization()) !!}</script>
+    @foreach ($schemas as $schema)
+        <script type="application/ld+json">{!! \App\Support\Seo::json($schema) !!}</script>
+    @endforeach
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="flex min-h-screen flex-col bg-white font-sans text-slate-800 antialiased">
@@ -29,6 +44,8 @@
 
             <nav class="hidden items-center gap-6 text-sm font-medium md:flex" aria-label="Navigation principale">
                 <a href="{{ route('home') }}" class="text-slate-700 hover:text-brand-700">{{ __('app.nav.home') }}</a>
+                <a href="{{ route('services.index') }}" class="text-slate-700 hover:text-brand-700">{{ __('app.nav.services') }}</a>
+                <a href="{{ route('contact') }}" class="text-slate-700 hover:text-brand-700">{{ __('app.nav.contact') }}</a>
                 <a href="{{ route('cart.show') }}" class="relative text-slate-700 hover:text-brand-700">
                     {{ __('orders.cart.title') }}
                     @if ($cartCount > 0)
@@ -82,6 +99,8 @@
 
         <nav x-cloak x-show="open" class="space-y-1 border-t border-slate-200 px-4 py-3 text-sm font-medium md:hidden" aria-label="Navigation mobile">
             <a href="{{ route('home') }}" class="block rounded-lg px-3 py-2 hover:bg-slate-100">{{ __('app.nav.home') }}</a>
+            <a href="{{ route('services.index') }}" class="block rounded-lg px-3 py-2 hover:bg-slate-100">{{ __('app.nav.services') }}</a>
+            <a href="{{ route('contact') }}" class="block rounded-lg px-3 py-2 hover:bg-slate-100">{{ __('app.nav.contact') }}</a>
             <a href="{{ route('cart.show') }}" class="block rounded-lg px-3 py-2 hover:bg-slate-100">{{ __('orders.cart.title') }}@if ($cartCount > 0) ({{ $cartCount }})@endif</a>
             @foreach ($menu as $root)
                 <a href="{{ route('categories.show', $root['slug']) }}" class="block rounded-lg px-3 py-2 hover:bg-slate-100">{{ $root['name'] }}</a>
@@ -123,21 +142,46 @@
     </main>
 
     <footer class="bg-brand-950 text-brand-200">
-        <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-            <div class="flex flex-col gap-6 sm:flex-row sm:justify-between">
+        <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+            <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
                 <div>
                     <p class="text-lg font-semibold text-white">{{ $site->site_name }}</p>
                     <p class="mt-1 text-sm">{{ $site->legal_name }}</p>
+                    <address class="mt-4 space-y-1 text-sm not-italic">
+                        <p>{{ $site->address }}</p>
+                        <p><a href="mailto:{{ $site->email }}" class="hover:text-white">{{ $site->email }}</a></p>
+                        @if ($site->phone)
+                            <p><a href="tel:{{ preg_replace('/\s+/', '', $site->phone) }}" class="hover:text-white">{{ $site->phone }}</a></p>
+                        @endif
+                    </address>
                 </div>
-                <address class="space-y-1 text-sm not-italic">
-                    <p>{{ $site->address }}</p>
-                    <p><a href="mailto:{{ $site->email }}" class="hover:text-white">{{ $site->email }}</a></p>
-                    @if ($site->phone)
-                        <p><a href="tel:{{ preg_replace('/\s+/', '', $site->phone) }}" class="hover:text-white">{{ $site->phone }}</a></p>
-                    @endif
-                </address>
+                <nav aria-label="{{ __('app.footer.company') }}">
+                    <p class="text-sm font-semibold text-white">{{ __('app.footer.company') }}</p>
+                    <ul class="mt-3 space-y-2 text-sm">
+                        <li><a href="{{ route('pages.about') }}" class="hover:text-white">{{ __('app.footer.about') }}</a></li>
+                        <li><a href="{{ route('pages.why-mitek') }}" class="hover:text-white">{{ __('app.footer.why') }}</a></li>
+                        <li><a href="{{ route('services.index') }}" class="hover:text-white">{{ __('app.footer.services') }}</a></li>
+                        <li><a href="{{ route('contact') }}" class="hover:text-white">{{ __('app.footer.contact') }}</a></li>
+                    </ul>
+                </nav>
+                <nav aria-label="{{ __('app.footer.help') }}">
+                    <p class="text-sm font-semibold text-white">{{ __('app.footer.help') }}</p>
+                    <ul class="mt-3 space-y-2 text-sm">
+                        <li><a href="{{ route('pages.payment') }}" class="hover:text-white">{{ __('app.footer.payment') }}</a></li>
+                        <li><a href="{{ route('pages.delivery') }}" class="hover:text-white">{{ __('app.footer.delivery') }}</a></li>
+                        <li><a href="{{ route('faq') }}" class="hover:text-white">{{ __('app.footer.faq') }}</a></li>
+                    </ul>
+                </nav>
+                <nav aria-label="{{ __('app.footer.legal') }}">
+                    <p class="text-sm font-semibold text-white">{{ __('app.footer.legal') }}</p>
+                    <ul class="mt-3 space-y-2 text-sm">
+                        <li><a href="{{ route('pages.legal-notice') }}" class="hover:text-white">{{ __('app.footer.legal_notice') }}</a></li>
+                        <li><a href="{{ route('pages.terms') }}" class="hover:text-white">{{ __('app.footer.terms') }}</a></li>
+                        <li><a href="{{ route('pages.privacy') }}" class="hover:text-white">{{ __('app.footer.privacy') }}</a></li>
+                    </ul>
+                </nav>
             </div>
-            <p class="mt-8 border-t border-brand-900 pt-6 text-xs">&copy; {{ now()->year }} {{ $site->legal_name }}. {{ __('app.footer.rights') }}</p>
+            <p class="mt-10 border-t border-brand-900 pt-6 text-xs">&copy; {{ now()->year }} {{ $site->legal_name }}. {{ __('app.footer.rights') }}</p>
         </div>
     </footer>
 

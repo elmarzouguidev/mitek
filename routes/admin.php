@@ -2,15 +2,20 @@
 
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\ContactMessageController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\OrderCreditNoteController;
 use App\Http\Controllers\Admin\OrderInvoiceController;
 use App\Http\Controllers\Admin\OrderPaymentController;
 use App\Http\Controllers\Admin\OrderStatusController;
+use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProductImageController;
 use App\Http\Controllers\Admin\QuoteRequestController;
+use App\Http\Controllers\Admin\ServiceController;
+use App\Http\Controllers\Admin\ServiceRequestController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\ShippingZoneController;
 use Illuminate\Support\Facades\Route;
@@ -47,3 +52,29 @@ Route::get('devis', [QuoteRequestController::class, 'index'])->name('quotes.inde
 Route::get('devis/{quote}', [QuoteRequestController::class, 'show'])->name('quotes.show');
 Route::post('devis/{quote}/reponse', [QuoteRequestController::class, 'reply'])->name('quotes.reply');
 Route::put('devis/{quote}/cloture', [QuoteRequestController::class, 'close'])->name('quotes.close');
+
+Route::resource('services', ServiceController::class)->except('show')->parameters(['services' => 'service'])->names('services');
+Route::get('demandes-service', [ServiceRequestController::class, 'index'])->name('service-requests.index');
+Route::get('demandes-service/{serviceRequest}', [ServiceRequestController::class, 'show'])->name('service-requests.show');
+Route::put('demandes-service/{serviceRequest}', [ServiceRequestController::class, 'update'])->name('service-requests.update');
+
+Route::get('pages', [PageController::class, 'index'])->name('pages.index');
+Route::get('pages/{page}/modifier', [PageController::class, 'edit'])->name('pages.edit');
+Route::put('pages/{page}', [PageController::class, 'update'])->name('pages.update');
+
+Route::get('faq', [FaqController::class, 'index'])->name('faq.index');
+Route::get('faq/categories/creer', [FaqController::class, 'createCategory'])->name('faq.categories.create');
+Route::post('faq/categories', [FaqController::class, 'storeCategory'])->name('faq.categories.store');
+Route::get('faq/categories/{category}/modifier', [FaqController::class, 'editCategory'])->name('faq.categories.edit');
+Route::put('faq/categories/{category}', [FaqController::class, 'updateCategory'])->name('faq.categories.update');
+Route::delete('faq/categories/{category}', [FaqController::class, 'destroyCategory'])->name('faq.categories.destroy');
+Route::get('faq/questions/creer', [FaqController::class, 'createItem'])->name('faq.items.create');
+Route::post('faq/questions', [FaqController::class, 'storeItem'])->name('faq.items.store');
+Route::get('faq/questions/{item}/modifier', [FaqController::class, 'editItem'])->name('faq.items.edit');
+Route::put('faq/questions/{item}', [FaqController::class, 'updateItem'])->name('faq.items.update');
+Route::delete('faq/questions/{item}', [FaqController::class, 'destroyItem'])->name('faq.items.destroy');
+
+Route::get('messages', [ContactMessageController::class, 'index'])->name('messages.index');
+Route::get('messages/{message}', [ContactMessageController::class, 'show'])->name('messages.show');
+Route::put('messages/{message}/non-lu', [ContactMessageController::class, 'markUnread'])->name('messages.unread');
+Route::delete('messages/{message}', [ContactMessageController::class, 'destroy'])->name('messages.destroy');

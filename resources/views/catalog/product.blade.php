@@ -16,7 +16,7 @@
     $crumbs[$product->name] = null;
 @endphp
 
-<x-layouts.app :title="$product->meta_title ?: $product->name" :description="$product->meta_description ?: \Illuminate\Support\Str::limit(strip_tags((string) ($product->excerpt ?: $product->description)), 155)">
+<x-layouts.app :title="$product->meta_title ?: $product->name" :description="$product->meta_description ?: \App\Support\Seo::description($product->excerpt ?: $product->description) ?: $product->name" og-type="product" :image="$images->isNotEmpty() ? $images[0]['large'] : null" :schemas="[app(\App\Services\Seo\StructuredData::class)->product($product)]">
     <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <x-breadcrumb :items="$crumbs" />
 

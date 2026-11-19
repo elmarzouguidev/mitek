@@ -1,4 +1,4 @@
-<x-layouts.app :title="__('orders.cart.title')">
+<x-layouts.app robots="noindex,nofollow" :title="__('orders.cart.title')">
     <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <h1 class="text-3xl font-bold tracking-tight text-brand-900">{{ __('orders.cart.title') }}</h1>
 

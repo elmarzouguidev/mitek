@@ -14,7 +14,7 @@ Installed and in use:
 - spatie/laravel-permission (roles `admin`, `customer`), laravel-settings (`App\Settings\*`), laravel-medialibrary, laravel-sitemap, laravel-sluggable, laravel-honeypot, laravel-phone, resend, mpdf/mpdf (invoices)
 
 Deliberately NOT used (decided with the owner; do not install): **Filament, Livewire, barryvdh/laravel-dompdf**.
-Still to build: sitemap/JSON-LD, CMS pages, services, contact form. Admin component kit (DataTable, Modal, ConfirmDialog, FileUpload, ImageInput, TagInput...) exists in `resources/js/admin/Components`.
+Still to build: Phase 5 home page redesign (awaiting approval of the section structure), then Phase 6. Admin component kit (DataTable, Modal, ConfirmDialog, FileUpload, ImageInput, TagInput...) exists in `resources/js/admin/Components`.
 Not wired yet: the existing 2FA services (`app/Services/Security`), planned for Phase 6.
 
 ## Common commands
@@ -55,9 +55,16 @@ Not wired yet: the existing 2FA services (`app/Services/Security`), planned for 
 - Storefront interactivity = Alpine only; admin = Vue/Inertia only. Keep Tailwind v4 conventions (no `tailwind.config.js`, `@theme` in CSS). Add dark-mode variants only if the page supports dark mode (storefront currently does not).
 - Money-affecting and security-sensitive code (checkout, COD rule, payment validation, uploads, policies) always gets Pest tests. Use factories; check for existing states (`User::factory()->admin()`, `->customer()`).
 
+## Content, services and contact (Phase 5)
+
+- **Services** (`services` table, admin Services): the 9 services of Mitek.md; `/services` (marketing, design-taste-frontend) and `/services/{slug}` with a request form (honeypot + `throttle:10,1`) → `ServiceRequest` (status new/contacted/quote_sent/done/closed, internal notes), customer confirmation email and admin notification.
+- **CMS pages**: fixed set `App\Enums\PageKey` (À propos, Pourquoi Mitek, Modes de paiement, Modes de livraison, Mentions légales, CGV, Confidentialité) at fixed French URLs; admins edit title, Markdown content, SEO and the published flag. Content may use `{{tokens}}` (`ContentRenderer::values()`): the COD limit, delays, bank holder and company identifiers come from the settings, never typed in a page; an empty setting prints `[À COMPLÉTER]`. Markdown is rendered with raw HTML stripped.
+- **FAQ**: categories + questions (admin FAQ); category slugs `paiement`, `livraison`, `services` feed the payment, delivery and service pages; `/faq` shows all.
+- **Contact**: `/contact` form (honeypot + throttle) stores a `ContactMessage` (read/unread in admin) and notifies `admin_notification_email`; phone, WhatsApp and map come from the settings and are hidden while empty.
+
 ## SEO rules
 
-Clean slugs; unique meta title (`<title>`) and meta description per page; canonical URL on every public page (already in the layout); JSON-LD `Organization`, `Product` (with offers) and `BreadcrumbList` written by hand; `sitemap.xml` (spatie/laravel-sitemap) and `robots.txt`; descriptive `alt` text on every image; the admin is `noindex`.
+Implemented (keep them true): every page passes `title`, `description`, `canonical`, `robots`, `image`, `ogType` and `schemas` to `<x-layouts.app>`; descriptions fall back to generated text (`App\Support\Seo::description`). JSON-LD (`App\Services\Seo\StructuredData`): Organization + LocalBusiness on every page, BreadcrumbList (from `<x-breadcrumb>`), Product + Offer (price TTC in MAD, availability), FAQPage, Service. Category URLs: a single filter group is indexable; two or more groups or a non-default sort are `noindex,follow` with the clean category URL as canonical (`CatalogSeo`). `/robots.txt` and `/sitemap.xml` are served by the app (`config/seo.php`); the sitemap is rebuilt daily and by a queued, de-duplicated job when public content is published. Private/utility pages are `noindex` and disallowed. One `h1` per page, no skipped heading level, an `alt` on every image, a branded 404/500 that never reads the database.
 
 ## Open items / TODO
 
@@ -83,7 +90,7 @@ Mail uses the `log` driver until deploy (Resend later). Before sending real emai
 
 ## Workflow rules
 
-1. Plan before coding; build phase by phase (Phases 1 foundations, 2 catalog, 3 cart/checkout/payment and 4 invoices/emails/account/quotes are done; next: 4 invoices/emails/customer area/quotes, 5 services/CMS/contact/SEO, 6 tests/performance/security).
+1. Plan before coding; build phase by phase (Phases 1 foundations, 2 catalog, 3 cart/checkout/payment, 4 invoices/emails/account/quotes and 5 services/CMS/contact/SEO (except the home redesign) are done; next: 4 invoices/emails/customer area/quotes, 5 services/CMS/contact/SEO, 6 tests/performance/security).
 2. At the end of each phase: run migrations and seeders, run `php artisan test`, run Pint, list the files changed, commit (with a message shown to the owner), then stop for review.
 3. Ask before anything hard to undo: schema shape, adding/removing packages, switching away from Vue/Inertia or Alpine.
 4. Follow the Boost guidelines below (activate the matching skills, use `search-docs` for version-specific APIs).

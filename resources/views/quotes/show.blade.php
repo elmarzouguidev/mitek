@@ -1,4 +1,4 @@
-<x-layouts.app :title="__('quotes.show.title', ['reference' => $quote->reference])">
+<x-layouts.app robots="noindex,nofollow" :title="__('quotes.show.title', ['reference' => $quote->reference])">
     <div class="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
         <header class="flex flex-wrap items-start justify-between gap-4">
             <div>

@@ -1,4 +1,4 @@
-<x-layouts.app :title="$term !== '' ? __('catalog.search.results_for', ['term' => $term]) : __('catalog.search.title')">
+<x-layouts.app robots="noindex,follow" :title="$term !== '' ? __('catalog.search.results_for', ['term' => $term]) : __('catalog.search.title')">
     <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <x-breadcrumb :items="[__('catalog.search.title') => null]" />
 
@@ -16,7 +16,7 @@
             @else
                 <div class="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                     @foreach ($products as $product)
-                        <x-product-card :product="$product" />
+                        <x-product-card :product="$product" :level="2" />
                     @endforeach
                 </div>
                 <div class="mt-8">{{ $products->links() }}</div>

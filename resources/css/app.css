@@ -26,3 +26,52 @@
 [x-cloak] {
     display: none !important;
 }
+
+/* Long-form content (CMS pages, FAQ answers): Markdown rendered to plain HTML. */
+.prose-mitek {
+    line-height: 1.75;
+}
+
+.prose-mitek > * + * {
+    margin-top: 1rem;
+}
+
+.prose-mitek h2 {
+    margin-top: 2.25rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--color-brand-900);
+}
+
+.prose-mitek h3 {
+    margin-top: 1.5rem;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-brand-800);
+}
+
+.prose-mitek ul {
+    list-style: disc;
+    padding-left: 1.25rem;
+}
+
+.prose-mitek ol {
+    list-style: decimal;
+    padding-left: 1.25rem;
+}
+
+.prose-mitek li + li {
+    margin-top: 0.375rem;
+}
+
+.prose-mitek a {
+    color: var(--color-brand-700);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.prose-mitek strong {
+    font-weight: 600;
+    color: #0f172a;
+}
