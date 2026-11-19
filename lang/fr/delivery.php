@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'how_title' => 'Comment l\'obtenir',
+    'everywhere' => 'Livraison partout au Maroc',
+    'headline' => 'Expédié :dispatch après validation du paiement',
+    'dispatch_within' => 'sous :hours h',
+    'dispatch_same_day' => 'le jour même',
+    'transit_single' => '{1} 1 jour ouvré|[2,*] :n jours ouvrés',
+    'transit_range' => ':min à :max jours ouvrés',
+    'summary_range' => ':min à :max h selon la ville',
+    'summary_single' => ':hours h selon la ville',
+    'estimate' => 'Livraison estimée :range vers :city',
+    'transit_line' => 'Transport : :transit',
+    'fee' => 'Frais de livraison : :fee TTC',
+    'fee_unknown' => 'Frais de livraison calculés à la commande.',
+    'hint' => 'Dates calculées pour un paiement validé aujourd\'hui, en jours ouvrés.',
+    'default_zone' => 'Ville non listée : estimation selon notre zone standard.',
+    'unavailable' => 'Livraison indisponible pour cette ville. Contactez-nous.',
+    'city' => 'Votre ville',
+    'city_cta' => 'Indiquer ma ville',
+    'calculate' => 'Estimer',
+    'loading' => 'Calcul en cours…',
+    'change_city' => 'Changer de ville',
+    'pickup' => 'Retrait possible à Casablanca',
+    'cod' => 'Paiement à la livraison disponible jusqu\'à :limit TTC',
+    'cart_title' => 'Livraison',
+];

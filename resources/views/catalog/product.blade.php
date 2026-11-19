@@ -92,6 +92,15 @@
                     </a>
                 @endif
 
+                <section class="mt-6 rounded-xl p-4 ring-1 ring-slate-200" aria-labelledby="how-title">
+                    <h2 id="how-title" class="text-base font-semibold text-brand-900">{{ __('delivery.how_title') }}</h2>
+                    <x-delivery-estimator class="mt-3" :product="$product->slug" :weight-grams="$product->weight_grams" quantity-selector="#quantity" />
+                    @if (app(\App\Settings\ClaimsSettings::class)->pickup_casablanca)
+                        <p class="mt-3 border-t border-slate-100 pt-3 text-sm text-slate-700">{{ __('delivery.pickup') }}</p>
+                    @endif
+                    <p class="mt-3 border-t border-slate-100 pt-3 text-sm text-slate-700">{{ __('delivery.cod', ['limit' => app(\App\Services\Core\Order\PaymentRules::class)->codLimit()->format()]) }}</p>
+                </section>
+
                 @if ($tierTable !== [])
                     <section class="mt-8" aria-labelledby="tiers-title">
                         <h2 id="tiers-title" class="text-lg font-semibold text-brand-900">{{ __('catalog.product.tiers_title') }}</h2>

@@ -18,6 +18,7 @@ use App\Http\Controllers\Storefront\CategoryController;
 use App\Http\Controllers\Storefront\CheckoutController;
 use App\Http\Controllers\Storefront\ContactController;
 use App\Http\Controllers\Storefront\CreditNoteController;
+use App\Http\Controllers\Storefront\DeliveryEstimateController;
 use App\Http\Controllers\Storefront\FaqController;
 use App\Http\Controllers\Storefront\InvoiceController;
 use App\Http\Controllers\Storefront\OrderController;
@@ -44,6 +45,7 @@ foreach (PageKey::cases() as $pageKey) {
 }
 
 Route::get('faq', [FaqController::class, 'index'])->name('faq');
+Route::get('livraison/estimation', DeliveryEstimateController::class)->middleware('throttle:60,1')->name('delivery.estimate');
 Route::get('rappel', [CallbackController::class, 'create'])->name('callback.create');
 Route::post('rappel', [CallbackController::class, 'store'])->middleware([ProtectAgainstSpam::class, 'throttle:5,1'])->name('callback.store');
 Route::get('contact', [ContactController::class, 'show'])->name('contact');

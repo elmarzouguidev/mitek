@@ -3,7 +3,7 @@
 <header class="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
     <div class="mx-auto flex max-w-7xl flex-wrap items-center gap-x-4 gap-y-2 px-4 transition-[padding] duration-200 sm:px-6 lg:flex-nowrap lg:px-8" :class="compact ? 'py-2' : 'py-3'">
         <a href="{{ route('home') }}" class="order-1 flex shrink-0 items-center" aria-label="{{ $site->site_name }}">
-            <img src="{{ asset('images/logo-mitek.png') }}" alt="{{ $site->site_name }}" width="115" height="40" class="w-auto transition-[height] duration-200" :class="compact ? 'h-7 lg:h-9' : 'h-10'">
+            <img src="{{ asset('images/logo-mitek.png') }}" alt="{{ $site->site_name }}" width="115" height="40" class="h-10 w-auto transition-[max-height] duration-200" :class="compact && 'max-h-7 lg:max-h-9'">
         </a>
 
         <div class="order-3 w-full lg:order-2 lg:mx-auto lg:w-auto lg:max-w-2xl lg:flex-1">

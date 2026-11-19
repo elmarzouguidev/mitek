@@ -250,7 +250,7 @@ function toggleDay(day) {
                     <FormField label="Supplément transporteur personnel (DH HT)" for="own_carrier_fee" :error="shippingForm.errors.own_carrier_fee">
                         <TextInput id="own_carrier_fee" type="number" v-model="shippingForm.own_carrier_fee" :invalid="!!shippingForm.errors.own_carrier_fee" />
                     </FormField>
-                    <FormField class="sm:col-span-2" label="Estimation de livraison" for="delivery_estimate" :error="shippingForm.errors.delivery_estimate">
+                    <FormField class="sm:col-span-2" label="Texte de secours pour le délai de livraison" for="delivery_estimate" hint="Utilisé seulement tant qu'aucune zone de livraison n'est active. Sinon le délai affiché (page Livraison, FAQ) est calculé à partir des jours de transport des zones." :error="shippingForm.errors.delivery_estimate">
                         <TextInput id="delivery_estimate" v-model="shippingForm.delivery_estimate" :invalid="!!shippingForm.errors.delivery_estimate" />
                     </FormField>
                 </div>

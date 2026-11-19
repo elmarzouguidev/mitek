@@ -2,6 +2,7 @@
 
 namespace App\Services\Content;
 
+use App\Services\Core\Shipping\DeliveryEstimator;
 use App\Settings\GeneralSettings;
 use App\Settings\PaymentSettings;
 use App\Settings\ShippingSettings;
@@ -22,6 +23,7 @@ class ContentRenderer
         private readonly GeneralSettings $general,
         private readonly PaymentSettings $payment,
         private readonly ShippingSettings $shipping,
+        private readonly DeliveryEstimator $delivery,
     ) {}
 
     public function html(string $content): HtmlString
@@ -89,7 +91,7 @@ class ContentRenderer
             'cash_deposit_delay' => $this->payment->cash_deposit_delay,
             'cheque_delay' => $this->payment->cheque_delay,
             'dispatch_days' => $this->shipping->dispatch_days,
-            'delivery_estimate' => $this->shipping->delivery_estimate,
+            'delivery_estimate' => $this->delivery->summaryText(),
             'own_carrier_fee' => $this->shipping->own_carrier_fee_cents > 0 ? Money::fromCents($this->shipping->own_carrier_fee_cents)->format() : null,
         ];
     }

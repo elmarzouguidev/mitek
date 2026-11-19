@@ -174,3 +174,9 @@ it('renders the search box as an ARIA combobox that submits without JavaScript',
         ->assertSee('action="'.route('search').'"', false)
         ->assertSee('role="search"', false);
 });
+
+it('sizes the logo without JavaScript (the compact state only caps it)', function () {
+    $this->get(route('home'))
+        ->assertSee('class="h-10 w-auto', false)
+        ->assertSee("compact && 'max-h-7 lg:max-h-9'", false);
+});

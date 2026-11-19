@@ -3,6 +3,7 @@
 namespace App\Models\Core\Shipping;
 
 use App\Policies\ShippingZonePolicy;
+use App\Services\Core\Shipping\DeliveryEstimator;
 use Database\Factories\Core\Shipping\ShippingZoneFactory;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Builder;
@@ -15,6 +16,12 @@ class ShippingZone extends Model
 {
     /** @use HasFactory<ShippingZoneFactory> */
     use HasFactory;
+
+    protected static function booted(): void
+    {
+        static::saved(fn () => DeliveryEstimator::flushCities());
+        static::deleted(fn () => DeliveryEstimator::flushCities());
+    }
 
     /**
      * @return array<string, string>

@@ -56,6 +56,7 @@
                         <div class="flex justify-between"><dt class="text-slate-600">{{ __('orders.cart.vat') }}</dt><dd>{{ $summary->itemsVat() }}</dd></div>
                         <div class="flex justify-between border-t border-slate-200 pt-2 text-base font-bold text-brand-900"><dt>{{ __('orders.cart.total_before_shipping') }}</dt><dd>{{ $summary->itemsTtc() }}</dd></div>
                     </dl>
+                    <x-delivery-estimator :cart="true" :weight-grams="$summary->weightGrams()" class="mt-5 border-t border-slate-200 pt-4" />
                     <p class="mt-3 text-xs text-slate-500">{{ __('orders.cart.shipping_note') }}</p>
                     <a href="{{ route('checkout.show') }}" class="mt-5 block rounded-lg bg-brand-700 px-5 py-3 text-center text-sm font-semibold text-white hover:bg-brand-800">{{ __('orders.cart.checkout') }}</a>
                     <a href="{{ route('quotes.create') }}" class="mt-3 block rounded-lg px-5 py-3 text-center text-sm font-semibold text-brand-700 ring-1 ring-inset ring-brand-200 hover:bg-brand-50">{{ __('quotes.cart_button') }}</a>
