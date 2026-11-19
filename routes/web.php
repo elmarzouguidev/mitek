@@ -56,6 +56,7 @@ Route::get('recherche', [SearchController::class, 'index'])->name('search');
 Route::get('recherche/suggestions', [SearchController::class, 'suggestions'])->middleware('throttle:60,1')->name('search.suggestions');
 
 Route::get('panier', [CartController::class, 'show'])->name('cart.show');
+Route::get('panier/resume', [CartController::class, 'summary'])->name('cart.summary');
 Route::post('panier', [CartController::class, 'store'])->middleware('throttle:60,1')->name('cart.store');
 Route::patch('panier/{slug}', [CartController::class, 'update'])->where('slug', '[a-z0-9-]+')->name('cart.update');
 Route::delete('panier/{slug}', [CartController::class, 'destroy'])->where('slug', '[a-z0-9-]+')->name('cart.destroy');

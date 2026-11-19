@@ -26,12 +26,10 @@
                 </a>
             @endauth
 
-            <a href="{{ route('cart.show') }}" class="relative flex items-center gap-2 rounded-lg px-2 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 sm:px-3">
+            <a href="{{ route('cart.show') }}" class="relative flex items-center gap-2 rounded-lg px-2 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 sm:px-3" @unless (request()->routeIs('cart.show', 'checkout.*')) aria-haspopup="dialog" @click="if (! ($event.ctrlKey || $event.metaKey || $event.shiftKey || $event.button !== 0)) { $event.preventDefault(); $dispatch('cart:open'); }" @endunless>
                 <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.39a1.5 1.5 0 0 1 1.45 1.1l.4 1.4m0 0 1.6 6.4a1.5 1.5 0 0 0 1.46 1.1h8.6a1.5 1.5 0 0 0 1.46-1.1l1.28-5.1a1.5 1.5 0 0 0-1.46-1.9H5.49ZM9 19.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm8.25 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"/></svg>
                 <span class="sr-only xl:not-sr-only">{{ __('orders.cart.title') }}</span>
-                @if ($cartCount > 0)
-                    <span class="inline-flex min-w-5 items-center justify-center rounded-full bg-brand-700 px-1.5 text-xs font-semibold text-white xl:ml-0">{{ $cartCount }}</span>
-                @endif
+                <span x-data x-show="$store.cart.count > 0" x-text="$store.cart.count" @if ($cartCount === 0) style="display: none" @endif class="inline-flex min-w-5 items-center justify-center rounded-full bg-brand-700 px-1.5 text-xs font-semibold text-white">{{ $cartCount }}</span>
             </a>
 
             <button type="button" x-ref="drawerTrigger" @click="openDrawer()" class="rounded-lg p-2 text-slate-700 hover:bg-slate-100 lg:hidden" aria-label="{{ __('app.nav.menu') }}" aria-haspopup="dialog" :aria-expanded="drawerOpen ? 'true' : 'false'" aria-controls="mobile-drawer">

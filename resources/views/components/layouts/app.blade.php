@@ -13,6 +13,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $pageTitle }}</title>
     <meta name="description" content="{{ $metaDescription }}">
     <meta name="robots" content="{{ $robots ?: 'index,follow' }}">
@@ -39,12 +40,13 @@
     @endif
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="flex min-h-screen flex-col bg-white font-sans text-slate-800 antialiased" x-data="siteShell()" @scroll.window.passive="onScroll()">
+<body class="flex min-h-screen flex-col bg-white font-sans text-slate-800 antialiased" data-cart-count="{{ $cartCount }}" x-data="siteShell()" @scroll.window.passive="onScroll()">
     <x-layout.announcement :announcement="$announcement" :hash="$announcementHash" />
     <x-layout.topbar :site="$site" />
     <x-layout.header :site="$site" :cart-count="$cartCount" />
     <x-layout.nav :menu="$menu" :site="$site" />
     <x-layout.drawer :menu="$menu" :site="$site" :cart-count="$cartCount" />
+    <x-layout.cart-drawer :menu="$menu" :cart-count="$cartCount" />
 
     <main class="flex-1">
         @if (session('success') || session('error') || $errors->hasAny(['cart', 'quantite', 'payment']))

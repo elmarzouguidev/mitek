@@ -67,7 +67,7 @@
 
                 <div class="mt-4"><x-stock-badge :product="$product" /></div>
 
-                <form method="POST" action="{{ route('cart.store') }}" class="mt-6 flex flex-wrap items-end gap-3">
+                <form method="POST" action="{{ route('cart.store') }}" @submit.prevent="$dispatch('cart:add', { form: $event.target })" class="mt-6 flex flex-wrap items-end gap-3">
                     @csrf
                     <input type="hidden" name="product" value="{{ $product->slug }}">
                     <div>

@@ -55,6 +55,13 @@ Not wired yet: the existing 2FA services (`app/Services/Security`), planned for 
 - Storefront interactivity = Alpine only; admin = Vue/Inertia only. Keep Tailwind v4 conventions (no `tailwind.config.js`, `@theme` in CSS). Add dark-mode variants only if the page supports dark mode (storefront currently does not).
 - Money-affecting and security-sensitive code (checkout, COD rule, payment validation, uploads, policies) always gets Pest tests. Use factories; check for existing states (`User::factory()->admin()`, `->customer()`).
 
+## Header, search and mini-cart (Phase 6A: A2, A3)
+
+- Layout partials live in `resources/views/components/layout/` (announcement, topbar, header, nav + mega menu, mobile drawer, cart drawer). Links to pages that are not built yet go through `nav_feature()` (`config/features.php` maps a feature to a route name): no dead links, no disabled stubs.
+- Menu tree: `CatalogMenu::tree()` is ONE cache entry (`Category::MENU_CACHE_KEY`), flushed when a product or category is saved or deleted. Absolute image URLs are cached in it: after serving the app on another host (screenshots), run `php artisan cache:clear`.
+- Search suggestions (`SearchSuggester`): grouped, max 5 per group, min 2 characters, 60 s cache per normalised term.
+- Mini-cart drawer: the cart is JSON from `CartPayload` (same `CartService`/`PriceCalculator` as `/panier`; `GET panier/resume`, and the cart POST/PATCH/DELETE answer JSON when asked for it). The browser never computes a price; quantity changes and removals are optimistic and roll back to the last server state on error. The cash on delivery hint uses the items total against `PaymentSettings::cod_limit_cents` (the final decision stays at checkout, shipping included). Without JavaScript the cart icon is a normal link to `/panier` and the product form posts normally.
+
 ## Settings groups, claims and delivery estimate (Phase 6A)
 
 - **Never show an unconfirmed business claim.** `App\Settings\ClaimsSettings` holds booleans, all `false` by default (`quote_within_24h`, `dedicated_contact`, `admin_documents_on_request`, `proforma_available`, `pickup_casablanca`, `show_warranty_lines`); each controls where its claim appears. Claims confirmed in Mitek.md need no switch: certified technical team, customer service 6 days a week, monthly maintenance contracts, detailed invoice with every order, delivery everywhere in Morocco, preferential pricing by quantity. Values (opening hours, social URLs, warranty text, CNDP number) are settings that are **hidden while empty**.
