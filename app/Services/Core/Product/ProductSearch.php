@@ -21,7 +21,7 @@ class ProductSearch
     {
         $words = $this->words($term);
 
-        $query = Product::query()->visible()->with(['media', 'brand', 'priceTiers']);
+        $query = Product::query()->visible()->with(['media', 'brand', 'priceTiers', 'specifications']);
 
         foreach ($words as $word) {
             $like = '%'.$this->escapeLike($word).'%';

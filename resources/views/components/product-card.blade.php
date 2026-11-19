@@ -4,6 +4,9 @@
     $calculator = app(\App\Services\Core\Product\PriceCalculator::class);
     $whatsappLink = app(\App\Support\WhatsApp::class)->productLink($product);
     $promo = $calculator->promo($product);
+    $bullets = $product->specifications->reject(fn ($spec): bool => strcasecmp($spec->value, $product->reference) === 0)->take(3);
+    $tiers = $calculator->tierTable($product);
+    $bestTier = $tiers === [] ? null : end($tiers);
 @endphp
 
 <article class="group flex flex-col overflow-hidden rounded-xl bg-white ring-1 ring-slate-200 transition hover:ring-brand-300">
@@ -17,12 +20,22 @@
         @if ($product->brand)
             <p class="text-xs font-medium text-brand-600">{{ $product->brand->name }}</p>
         @endif
-        <h{{ $level }} class="mt-0.5 text-sm font-semibold text-slate-900">
+        <h{{ $level }} class="mt-0.5 line-clamp-2 min-h-10 text-sm font-semibold leading-5 text-slate-900">
             <a href="{{ route('products.show', $product->slug) }}" class="hover:text-brand-700">{{ $product->name }}</a>
         </h{{ $level }}>
         <p class="mt-0.5 text-xs text-slate-500">{{ __('catalog.reference') }} {{ $product->reference }}</p>
 
-        <div class="mt-auto flex items-end justify-between gap-2 pt-4">
+        @if ($bullets->isNotEmpty())
+            <ul class="mt-2 space-y-0.5 text-xs text-slate-600" data-card-specs>
+                @foreach ($bullets as $spec)
+                    <li class="truncate"><span class="text-slate-500">{{ $spec->name }} :</span> {{ $spec->value }}</li>
+                @endforeach
+            </ul>
+        @endif
+
+        <div class="mt-3"><x-stock-badge :product="$product" /></div>
+
+        <div class="mt-auto flex items-end justify-between gap-2 pt-3">
             <div>
                 @if ($promo)
                     <p class="text-xs text-slate-500"><span class="sr-only">{{ __('catalog.promo.was') }}</span> <s>{{ $promo->compareAtTtc }}</s></p>
@@ -30,8 +43,20 @@
                 <p class="text-lg font-bold {{ $promo ? 'text-red-700' : 'text-brand-900' }}">{{ $calculator->unitPriceTtc($product) }} <span class="text-xs font-medium text-slate-500">{{ __('catalog.ttc') }}</span></p>
                 <p class="text-xs text-slate-500">{{ $calculator->unitPriceHt($product) }} {{ __('catalog.ht') }}</p>
             </div>
-            <x-stock-badge :product="$product" />
+
+            <form method="POST" action="{{ route('cart.store') }}" @submit.prevent="$dispatch('cart:add', { form: $event.target })">
+                @csrf
+                <input type="hidden" name="product" value="{{ $product->slug }}">
+                <input type="hidden" name="quantite" value="1">
+                <button type="submit" @disabled(! $product->isInStock()) class="flex size-11 items-center justify-center rounded-full bg-brand-700 text-white transition hover:bg-brand-800 active:scale-95 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400 motion-reduce:transition-none" aria-label="{{ __('catalog.card.add_to_cart', ['name' => $product->name]) }}">
+                    <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.39a1.5 1.5 0 0 1 1.45 1.1l.4 1.4m0 0 1.6 6.4a1.5 1.5 0 0 0 1.46 1.1h8.6a1.5 1.5 0 0 0 1.46-1.1l1.28-5.1a1.5 1.5 0 0 0-1.46-1.9H5.49ZM12 8v4m-2-2h4"/></svg>
+                </button>
+            </form>
         </div>
+
+        @if ($bestTier && $bestTier['unit_ttc']->isLessThanOrEqualTo($calculator->unitPriceTtc($product)))
+            <p class="mt-1 text-xs font-medium text-emerald-700" data-card-tier>{{ __('catalog.card.tier_hint', ['price' => $bestTier['unit_ttc']->format(), 'quantity' => $bestTier['from']]) }}</p>
+        @endif
 
         @if ($whatsappLink)
             <a href="{{ $whatsappLink }}" target="_blank" rel="noopener noreferrer" class="mt-3 inline-flex items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-xs font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-200 transition hover:bg-emerald-50 active:scale-[0.98]">

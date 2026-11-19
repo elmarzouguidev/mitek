@@ -27,6 +27,8 @@ class CategoryController extends Controller
             'filters' => $filters,
             'products' => $catalog->listing($category, $filters)->paginate(ProductCatalog::PER_PAGE)->withQueryString(),
             'brands' => $catalog->brandsFor($category),
+            'printers' => $catalog->printersFor($category),
+            'facets' => $catalog->facetCounts($category, $filters),
             'subcategories' => $category->children,
             'sorts' => ProductSort::cases(),
             'seo' => $seo->forCategory($category, $filters, max(1, (int) $request->query('page', 1))),

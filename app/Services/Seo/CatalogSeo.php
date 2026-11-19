@@ -10,7 +10,7 @@ use App\Services\Core\Product\CatalogFilters;
  * Canonical URL and robots directive of a category listing.
  *
  * - clean URL, or a single filter group (subcategory, brands, price, availability): indexable, canonical to itself;
- * - two or more filter groups, or a non-default sort order: `noindex,follow`, canonical to the clean category URL;
+ * - two or more filter groups, a printer filter, or a non-default sort order: `noindex,follow`, canonical to the clean category URL;
  * - pagination keeps `?page=N` in the canonical (unfiltered listings only).
  */
 class CatalogSeo
@@ -24,7 +24,7 @@ class CatalogSeo
         $groups = $this->activeFilterGroups($filters);
         $sorted = $filters->sort !== ProductSort::Featured;
 
-        if ($sorted || $groups > 1) {
+        if ($sorted || $groups > 1 || $filters->printerNames !== []) {
             return ['canonical' => $base, 'robots' => 'noindex,follow'];
         }
 

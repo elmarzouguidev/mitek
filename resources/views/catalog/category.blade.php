@@ -4,7 +4,11 @@
         $crumbs[$category->parent->name] = route('categories.show', $category->parent->slug);
     }
     $crumbs[$category->name] = null;
-    $hasActiveFilters = $filters->subcategorySlug || $filters->brandSlugs || $filters->minPriceDh !== null || $filters->maxPriceDh !== null || $filters->inStockOnly;
+    $hasActiveFilters = $filters->subcategorySlug || $filters->brandSlugs || $filters->printerNames || $filters->minPriceDh !== null || $filters->maxPriceDh !== null || $filters->inStockOnly;
+    $brandCounts = $facets['brands'];
+    $printerCounts = $facets['printers'];
+    $visibleBrands = $brands->filter(fn ($brand) => ($brandCounts[$brand->id] ?? 0) > 0 || in_array($brand->slug, $filters->brandSlugs, true))->values();
+    $visiblePrinters = collect($printers)->filter(fn ($total, $name) => ($printerCounts[$name] ?? 0) > 0 || in_array($name, $filters->printerNames, true))->keys()->values();
 @endphp
 
 <x-layouts.app :title="$category->meta_title ?: $category->name" :description="$category->meta_description ?: \App\Support\Seo::description($category->description) ?: __('catalog.category_description', ['name' => $category->name])" :canonical="$seo['canonical']" :robots="$seo['robots']">
@@ -34,22 +38,46 @@
                         <fieldset>
                             <legend class="font-semibold text-slate-900">{{ __('catalog.subcategory') }}</legend>
                             <div class="mt-2 space-y-1.5">
-                                <label class="flex items-center gap-2"><input type="radio" name="sous_categorie" value="" @checked(! $filters->subcategorySlug) class="text-brand-700 focus:ring-brand-600"> {{ __('catalog.all_subcategories') }}</label>
+                                <label class="flex items-center gap-2"><input type="radio" name="sous_categorie" value="" @checked(! $filters->subcategorySlug) class="text-brand-700 focus:ring-brand-600"> {{ __('catalog.all_subcategories') }} <span class="text-slate-400" data-facet-count>({{ array_sum($facets['subcategories']) }})</span></label>
                                 @foreach ($subcategories as $child)
-                                    <label class="flex items-center gap-2"><input type="radio" name="sous_categorie" value="{{ $child->slug }}" @checked($filters->subcategorySlug === $child->slug) class="text-brand-700 focus:ring-brand-600"> {{ $child->name }}</label>
+                                    <label class="flex items-center gap-2"><input type="radio" name="sous_categorie" value="{{ $child->slug }}" @checked($filters->subcategorySlug === $child->slug) class="text-brand-700 focus:ring-brand-600"> {{ $child->name }} <span class="text-slate-400" data-facet-count>({{ $facets['subcategories'][$child->id] ?? 0 }})</span></label>
                                 @endforeach
                             </div>
                         </fieldset>
                     @endif
 
-                    @if ($brands->isNotEmpty())
-                        <fieldset>
+                    @if ($visibleBrands->isNotEmpty())
+                        <fieldset x-data="facetList(8)">
                             <legend class="font-semibold text-slate-900">{{ __('catalog.brand') }}</legend>
+                            @if ($visibleBrands->count() > 8)
+                                <input type="search" x-model="q" @change.stop @keydown.enter.prevent placeholder="{{ __('catalog.facets.search') }}" aria-label="{{ __('catalog.brand') }} : {{ __('catalog.facets.search') }}" class="mt-2 block w-full rounded-lg border-0 px-3 py-1.5 ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-brand-600">
+                            @endif
                             <div class="mt-2 space-y-1.5">
-                                @foreach ($brands as $brand)
-                                    <label class="flex items-center gap-2"><input type="checkbox" name="marques[]" value="{{ $brand->slug }}" @checked(in_array($brand->slug, $filters->brandSlugs, true)) class="rounded text-brand-700 focus:ring-brand-600"> {{ $brand->name }}</label>
+                                @foreach ($visibleBrands as $index => $brand)
+                                    <label x-show="show(@js($brand->name), {{ $index }}, @js(in_array($brand->slug, $filters->brandSlugs, true)))" class="flex items-center gap-2"><input type="checkbox" name="marques[]" value="{{ $brand->slug }}" @checked(in_array($brand->slug, $filters->brandSlugs, true)) class="rounded text-brand-700 focus:ring-brand-600"> {{ $brand->name }} <span class="text-slate-400" data-facet-count>({{ $brandCounts[$brand->id] ?? 0 }})</span></label>
                                 @endforeach
                             </div>
+                            @if ($visibleBrands->count() > 8)
+                                <button type="button" x-cloak x-show="!all && !searching" @click="all = true" class="mt-2 text-xs font-medium text-brand-700 hover:underline">{{ __('catalog.facets.more', ['count' => $visibleBrands->count() - 8]) }}</button>
+                            @endif
+                        </fieldset>
+                    @endif
+
+                    @if ($visiblePrinters->isNotEmpty())
+                        <fieldset x-data="facetList(8)" data-facet="printer">
+                            <legend class="font-semibold text-slate-900">{{ __('catalog.facets.printer') }}</legend>
+                            <p class="mt-1 text-xs text-slate-500">{{ __('catalog.facets.printer_hint') }}</p>
+                            @if ($visiblePrinters->count() > 8)
+                                <input type="search" x-model="q" @change.stop @keydown.enter.prevent placeholder="{{ __('catalog.facets.search') }}" aria-label="{{ __('catalog.facets.printer') }} : {{ __('catalog.facets.search') }}" class="mt-2 block w-full rounded-lg border-0 px-3 py-1.5 ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-brand-600">
+                            @endif
+                            <div class="mt-2 space-y-1.5">
+                                @foreach ($visiblePrinters as $index => $printer)
+                                    <label x-show="show(@js($printer), {{ $index }}, @js(in_array($printer, $filters->printerNames, true)))" class="flex items-start gap-2"><input type="checkbox" name="imprimantes[]" value="{{ $printer }}" @checked(in_array($printer, $filters->printerNames, true)) class="mt-0.5 rounded text-brand-700 focus:ring-brand-600"> <span>{{ $printer }} <span class="text-slate-400" data-facet-count>({{ $printerCounts[$printer] ?? 0 }})</span></span></label>
+                                @endforeach
+                            </div>
+                            @if ($visiblePrinters->count() > 8)
+                                <button type="button" x-cloak x-show="!all && !searching" @click="all = true" class="mt-2 text-xs font-medium text-brand-700 hover:underline">{{ __('catalog.facets.more', ['count' => $visiblePrinters->count() - 8]) }}</button>
+                            @endif
                         </fieldset>
                     @endif
 
@@ -62,7 +90,7 @@
                         </div>
                     </fieldset>
 
-                    <label class="flex items-center gap-2 font-medium text-slate-900"><input type="checkbox" name="en_stock" value="1" @checked($filters->inStockOnly) class="rounded text-brand-700 focus:ring-brand-600"> {{ __('catalog.in_stock_only') }}</label>
+                    <label class="flex items-center gap-2 font-medium text-slate-900"><input type="checkbox" name="en_stock" value="1" @checked($filters->inStockOnly) class="rounded text-brand-700 focus:ring-brand-600"> {{ __('catalog.in_stock_only') }} <span class="font-normal text-slate-400" data-facet-count>({{ $facets['in_stock'] }})</span></label>
 
                     <div>
                         <label for="tri" class="font-semibold text-slate-900">{{ __('catalog.sort_by') }}</label>

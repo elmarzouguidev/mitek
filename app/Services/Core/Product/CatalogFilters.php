@@ -11,6 +11,7 @@ final readonly class CatalogFilters
 {
     /**
      * @param  array<int, string>  $brandSlugs
+     * @param  array<int, string>  $printerNames  compatible printer models (exact names)
      */
     public function __construct(
         public ?string $subcategorySlug = null,
@@ -19,5 +20,6 @@ final readonly class CatalogFilters
         public ?int $maxPriceDh = null,
         public bool $inStockOnly = false,
         public ProductSort $sort = ProductSort::Featured,
+        public array $printerNames = [],
     ) {}
 }

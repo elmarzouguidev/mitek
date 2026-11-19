@@ -19,7 +19,7 @@ class ProductController extends Controller
 
         $related = Product::query()
             ->visible()
-            ->with(['media', 'brand', 'priceTiers'])
+            ->with(['media', 'brand', 'priceTiers', 'specifications'])
             ->where('category_id', $product->category_id)
             ->whereKeyNot($product->id)
             ->orderByDesc('is_featured')

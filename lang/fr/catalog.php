@@ -50,6 +50,18 @@ return [
         'related' => 'Produits similaires',
         'tier_applied' => 'Tarif dégressif appliqué',
     ],
+    'card' => [
+        'add_to_cart' => 'Ajouter :name au panier',
+        'tier_hint' => 'Dès :price TTC l\'unité à partir de :quantity',
+    ],
+    'facets' => [
+        'search' => 'Filtrer la liste',
+        'more' => 'Voir plus (:count)',
+        'less' => 'Voir moins',
+        'printer' => 'Imprimante compatible',
+        'printer_hint' => 'Consommables compatibles avec votre modèle.',
+        'none' => 'Aucun résultat',
+    ],
     'badges' => [
         'promo' => '−:percent %',
         'best_seller' => 'Top vente',

@@ -40,6 +40,11 @@ class CatalogFilterRequest extends FormRequest
             maxPriceDh: $this->price('prix_max'),
             inStockOnly: $this->boolean('en_stock'),
             sort: ProductSort::tryFrom((string) $this->query('tri')) ?? ProductSort::Featured,
+            printerNames: collect((array) $this->query('imprimantes', []))
+                ->filter(fn (mixed $name): bool => is_string($name) && $name !== '' && mb_strlen($name) <= 150)
+                ->take(30)
+                ->values()
+                ->all(),
         );
     }
 
