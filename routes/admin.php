@@ -26,6 +26,9 @@ Route::get('parametres', [SettingsController::class, 'edit'])->name('settings.ed
 Route::put('parametres/general', [SettingsController::class, 'updateGeneral'])->name('settings.general');
 Route::put('parametres/paiement', [SettingsController::class, 'updatePayment'])->name('settings.payment');
 Route::put('parametres/livraison', [SettingsController::class, 'updateShipping'])->name('settings.shipping');
+Route::put('parametres/annonce', [SettingsController::class, 'updateAnnouncement'])->name('settings.announcement');
+Route::put('parametres/engagements', [SettingsController::class, 'updateClaims'])->name('settings.claims');
+Route::put('parametres/catalogue', [SettingsController::class, 'updateCatalog'])->name('settings.catalog');
 
 Route::resource('categories', CategoryController::class)->except('show');
 Route::resource('marques', BrandController::class)->except('show')->parameters(['marques' => 'brand'])->names('brands');

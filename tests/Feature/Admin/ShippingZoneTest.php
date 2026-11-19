@@ -18,6 +18,8 @@ function zonePayload(array $overrides = []): array
         'name' => 'Casablanca et environs',
         'is_default' => false,
         'is_active' => true,
+        'transit_min_days' => 1,
+        'transit_max_days' => 3,
         'cities' => ['Casablanca', 'Mohammedia'],
         'rates' => [
             ['min_weight_g' => 0, 'max_weight_g' => 5000, 'price_ht' => '25'],
@@ -44,7 +46,8 @@ it('creates a zone with cities and weight rates stored in centimes', function ()
 
     $zone = ShippingZone::with(['cities', 'rates'])->firstOrFail();
 
-    expect($zone->cities->pluck('city')->all())->toBe(['Casablanca', 'Mohammedia'])
+    expect($zone->transit_min_days)->toBe(1)->and($zone->transit_max_days)->toBe(3)
+        ->and($zone->cities->pluck('city')->all())->toBe(['Casablanca', 'Mohammedia'])
         ->and($zone->cities->pluck('normalized')->all())->toBe(['casablanca', 'mohammedia'])
         ->and($zone->rates->map(fn ($rate) => [$rate->min_weight_g, $rate->max_weight_g, $rate->price_ht->cents])->all())
         ->toBe([[0, 5000, 2500], [5001, null, 6050]]);
@@ -62,6 +65,9 @@ it('validates the zone', function (array $overrides, string|array $errors) {
     'overlapping brackets' => [['rates' => [['min_weight_g' => 0, 'max_weight_g' => 5000, 'price_ht' => '10'], ['min_weight_g' => 4000, 'max_weight_g' => null, 'price_ht' => '20']]], 'rates.1.min_weight_g'],
     'bracket after an open ended one' => [['rates' => [['min_weight_g' => 0, 'max_weight_g' => null, 'price_ht' => '10'], ['min_weight_g' => 9000, 'max_weight_g' => 10000, 'price_ht' => '20']]], 'rates.1.min_weight_g'],
     'duplicate city in the list' => [['cities' => ['Fès', 'fes']], 'cities.1'],
+    'transit minimum missing' => [['transit_min_days' => ''], 'transit_min_days'],
+    'transit maximum below minimum' => [['transit_min_days' => 3, 'transit_max_days' => 1], 'transit_max_days'],
+    'transit too long' => [['transit_max_days' => 61], 'transit_max_days'],
 ]);
 
 it('accepts contiguous brackets in any order', function () {
@@ -127,5 +133,7 @@ it('lists the zones and exposes one to the edit form with prices in dirhams', fu
             ->component('Shipping/Form')
             ->where('zone.cities', ['Fès'])
             ->where('zone.rates.0.price_ht', 25.5)
-            ->where('zone.rates.0.max_weight_g', 5000));
+            ->where('zone.rates.0.max_weight_g', 5000)
+            ->where('zone.transit_min_days', 1)
+            ->where('zone.transit_max_days', 3));
 });

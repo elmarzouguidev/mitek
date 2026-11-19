@@ -72,6 +72,7 @@ it('converts the own carrier fee to centimes', function () {
             'dispatch_days' => 3,
             'delivery_estimate' => '24 à 72 h',
             'own_carrier_fee' => 50,
+            'working_days' => [1, 2, 3, 4, 5, 6],
         ])
         ->assertSessionHasNoErrors();
 

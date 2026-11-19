@@ -25,6 +25,8 @@ class ShippingZoneWriter
                 'name' => $data['name'],
                 'is_default' => $isDefault,
                 'is_active' => (bool) ($data['is_active'] ?? false),
+                'transit_min_days' => (int) $data['transit_min_days'],
+                'transit_max_days' => (int) $data['transit_max_days'],
             ])->save();
 
             $zone->cities()->delete();

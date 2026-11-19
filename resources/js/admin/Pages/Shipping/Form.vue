@@ -19,6 +19,8 @@ const form = useForm({
     name: props.zone?.name ?? '',
     is_default: props.zone?.is_default ?? false,
     is_active: props.zone?.is_active ?? true,
+    transit_min_days: props.zone?.transit_min_days ?? 1,
+    transit_max_days: props.zone?.transit_max_days ?? 3,
     cities: props.zone?.cities ?? [],
     rates: props.zone?.rates ?? [{ min_weight_g: 0, max_weight_g: '', price_ht: '' }],
 });
@@ -54,6 +56,12 @@ const cityErrors = () => Object.entries(form.errors).filter(([key]) => key.start
                 </FormField>
                 <Checkbox v-model="form.is_active" label="Zone active" />
                 <Checkbox v-model="form.is_default" label="Zone par défaut (villes non listées)" />
+                <FormField label="Transit minimum (jours ouvrés)" for="transit_min_days" hint="Après l'expédition." :error="error('transit_min_days')">
+                    <TextInput id="transit_min_days" v-model="form.transit_min_days" type="number" :invalid="!!error('transit_min_days')" />
+                </FormField>
+                <FormField label="Transit maximum (jours ouvrés)" for="transit_max_days" :error="error('transit_max_days')">
+                    <TextInput id="transit_max_days" v-model="form.transit_max_days" type="number" :invalid="!!error('transit_max_days')" />
+                </FormField>
                 <div class="sm:col-span-2">
                     <FormField label="Villes de la zone" for="cities" hint="Tapez une ville puis Entrée. Une ville ne peut appartenir qu'à une seule zone." :error="cityErrors()[0] ?? error('cities')">
                         <TagInput id="cities" v-model="form.cities" placeholder="Ajouter une ville…" />

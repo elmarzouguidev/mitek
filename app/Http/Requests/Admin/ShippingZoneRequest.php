@@ -23,6 +23,8 @@ class ShippingZoneRequest extends FormRequest
             'name' => ['required', 'string', 'max:100'],
             'is_default' => ['boolean'],
             'is_active' => ['boolean'],
+            'transit_min_days' => ['required', 'integer', 'between:0,30'],
+            'transit_max_days' => ['required', 'integer', 'gte:transit_min_days', 'max:60'],
             'cities' => ['nullable', 'array', 'max:200'],
             'cities.*' => ['string', 'max:100'],
             'rates' => ['required', 'array', 'min:1', 'max:20'],

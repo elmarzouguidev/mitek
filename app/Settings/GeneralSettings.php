@@ -52,6 +52,28 @@ class GeneralSettings extends Settings
     /** Where admin notifications (new order, proof, quote, service request, contact message) are sent. */
     public string $admin_notification_email;
 
+    /** Opening hours shown in the footer and on the contact page; hidden while empty. */
+    public ?string $opening_hours;
+
+    /** Hours the WhatsApp line answers, shown next to the floating button; hidden while empty. */
+    public ?string $whatsapp_hours;
+
+    public ?string $facebook_url;
+
+    public ?string $instagram_url;
+
+    public ?string $linkedin_url;
+
+    public ?string $youtube_url;
+
+    public ?string $tiktok_url;
+
+    /** TODO: CNDP declaration or authorisation number, shown with the newsletter and privacy notices. */
+    public ?string $cndp_number;
+
+    /** Warranty wording shown on product pages when the `show_warranty_lines` claim is on. */
+    public ?string $warranty_text;
+
     public static function group(): string
     {
         return 'general';

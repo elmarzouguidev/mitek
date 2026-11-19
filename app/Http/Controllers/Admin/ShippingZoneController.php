@@ -27,6 +27,7 @@ class ShippingZoneController extends Controller
                     'name' => $zone->name,
                     'is_default' => $zone->is_default,
                     'is_active' => $zone->is_active,
+                    'transit' => $zone->transit_min_days.'–'.$zone->transit_max_days.' j',
                     'cities_count' => $zone->cities_count,
                     'rates_count' => $zone->rates_count,
                 ])->values(),
@@ -59,6 +60,8 @@ class ShippingZoneController extends Controller
                 'name' => $zone->name,
                 'is_default' => $zone->is_default,
                 'is_active' => $zone->is_active,
+                'transit_min_days' => $zone->transit_min_days,
+                'transit_max_days' => $zone->transit_max_days,
                 'cities' => $zone->cities->map(fn (ShippingZoneCity $city): string => $city->city)->values(),
                 'rates' => $zone->rates->map(fn (ShippingRate $rate): array => [
                     'min_weight_g' => $rate->min_weight_g,

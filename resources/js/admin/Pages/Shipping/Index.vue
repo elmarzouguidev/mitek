@@ -29,6 +29,7 @@ function confirmDelete() {
                 <tr>
                     <th class="px-4 py-3 font-medium">Zone</th>
                     <th class="px-4 py-3 font-medium">Villes</th>
+                    <th class="px-4 py-3 font-medium">Transit</th>
                     <th class="px-4 py-3 font-medium">Tranches de poids</th>
                     <th class="px-4 py-3 font-medium">Statut</th>
                     <th class="px-4 py-3 text-right font-medium">Actions</th>
@@ -38,6 +39,7 @@ function confirmDelete() {
                 <tr v-for="zone in zones" :key="zone.id">
                     <td class="px-4 py-3 font-medium text-slate-900">{{ zone.name }} <Badge v-if="zone.is_default" tone="blue" class="ml-1">Par défaut</Badge></td>
                     <td class="px-4 py-3">{{ zone.cities_count }}</td>
+                    <td class="px-4 py-3">{{ zone.transit }}</td>
                     <td class="px-4 py-3">{{ zone.rates_count }}</td>
                     <td class="px-4 py-3"><Badge :tone="zone.is_active ? 'green' : 'slate'">{{ zone.is_active ? 'Active' : 'Inactive' }}</Badge></td>
                     <td class="px-4 py-3 text-right">
@@ -45,7 +47,7 @@ function confirmDelete() {
                         <button type="button" class="ml-4 font-medium text-red-600 hover:underline" @click="pendingDelete = zone">Supprimer</button>
                     </td>
                 </tr>
-                <tr v-if="!zones.length"><td colspan="5" class="px-4 py-10 text-center text-slate-500">Aucune zone : les commandes livrées par Mitek.ma sont impossibles tant qu'aucune zone par défaut n'existe.</td></tr>
+                <tr v-if="!zones.length"><td colspan="6" class="px-4 py-10 text-center text-slate-500">Aucune zone : les commandes livrées par Mitek.ma sont impossibles tant qu'aucune zone par défaut n'existe.</td></tr>
             </tbody>
         </table>
     </div>

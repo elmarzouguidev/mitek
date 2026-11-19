@@ -20,6 +20,8 @@ class ShippingZoneFactory extends Factory
             'name' => fake()->unique()->city(),
             'is_default' => false,
             'is_active' => true,
+            'transit_min_days' => 1,
+            'transit_max_days' => 3,
         ];
     }
 
