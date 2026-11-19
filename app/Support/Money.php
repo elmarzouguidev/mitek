@@ -87,9 +87,9 @@ final readonly class Money implements JsonSerializable, Stringable
     /**
      * French display format with non-breaking spaces, e.g. "1 250,50 DH".
      */
-    public function format(): string
+    public function format(string $thousandsSeparator = "\u{202F}"): string
     {
-        return number_format($this->toDecimal(), 2, ',', "\u{202F}")."\u{00A0}DH";
+        return number_format($this->toDecimal(), 2, ',', $thousandsSeparator)."\u{00A0}DH";
     }
 
     public function __toString(): string

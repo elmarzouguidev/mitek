@@ -9,6 +9,7 @@ const sidebarOpen = ref(false);
 const navigation = [
     { name: 'Tableau de bord', route: 'admin.dashboard', match: 'admin.dashboard' },
     { name: 'Commandes', route: 'admin.orders.index', match: 'admin.orders.*' },
+    { name: 'Devis', route: 'admin.quotes.index', match: 'admin.quotes.*' },
     { name: 'Produits', route: 'admin.products.index', match: 'admin.products.*' },
     { name: 'Catégories', route: 'admin.categories.index', match: 'admin.categories.*' },
     { name: 'Marques', route: 'admin.brands.index', match: 'admin.brands.*' },

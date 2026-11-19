@@ -58,6 +58,7 @@
                     </dl>
                     <p class="mt-3 text-xs text-slate-500">{{ __('orders.cart.shipping_note') }}</p>
                     <a href="{{ route('checkout.show') }}" class="mt-5 block rounded-lg bg-brand-700 px-5 py-3 text-center text-sm font-semibold text-white hover:bg-brand-800">{{ __('orders.cart.checkout') }}</a>
+                    <a href="{{ route('quotes.create') }}" class="mt-3 block rounded-lg px-5 py-3 text-center text-sm font-semibold text-brand-700 ring-1 ring-inset ring-brand-200 hover:bg-brand-50">{{ __('quotes.cart_button') }}</a>
                     <a href="{{ route('home') }}" class="mt-3 block text-center text-sm text-brand-700 hover:underline">{{ __('orders.cart.continue') }}</a>
                 </aside>
             </div>

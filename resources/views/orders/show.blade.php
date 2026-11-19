@@ -65,6 +65,12 @@
             <p class="mt-6 rounded-lg bg-brand-50 px-4 py-3 text-sm text-brand-900">{{ __('orders.show.paid_info') }}</p>
         @endif
 
+        @if ($invoiceUrl)
+            <p class="mt-6">
+                <a href="{{ $invoiceUrl }}" target="_blank" rel="noopener" class="inline-flex items-center rounded-lg px-4 py-2 text-sm font-semibold text-brand-700 ring-1 ring-inset ring-brand-200 hover:bg-brand-50">{{ __('orders.show.invoice', ['number' => $order->invoice->number]) }}</a>
+            </p>
+        @endif
+
         @if ($order->tracking_number)
             <section class="mt-6 rounded-xl p-5 ring-1 ring-slate-200">
                 <h2 class="font-semibold text-brand-900">{{ __('orders.show.tracking') }}</h2>

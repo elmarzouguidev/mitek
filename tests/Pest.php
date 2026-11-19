@@ -2,6 +2,7 @@
 
 use Database\Seeders\RoleSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 /*
@@ -17,7 +18,11 @@ use Tests\TestCase;
 
 pest()->extend(TestCase::class)
     ->use(RefreshDatabase::class)
-    ->beforeEach(fn () => $this->seed(RoleSeeder::class))
+    ->beforeEach(function () {
+        $this->seed(RoleSeeder::class);
+        Storage::fake('local');
+        Storage::fake('public');
+    })
     ->in('Feature');
 
 /*

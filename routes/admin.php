@@ -4,10 +4,12 @@ use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\OrderInvoiceController;
 use App\Http\Controllers\Admin\OrderPaymentController;
 use App\Http\Controllers\Admin\OrderStatusController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProductImageController;
+use App\Http\Controllers\Admin\QuoteRequestController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\ShippingZoneController;
 use Illuminate\Support\Facades\Route;
@@ -30,6 +32,7 @@ Route::delete('produits/{product}/images/{media}', [ProductImageController::clas
 
 Route::get('commandes', [OrderController::class, 'index'])->name('orders.index');
 Route::get('commandes/{order}', [OrderController::class, 'show'])->name('orders.show');
+Route::get('commandes/{order}/facture', [OrderInvoiceController::class, 'show'])->name('orders.invoice');
 Route::put('commandes/{order}/statut', [OrderStatusController::class, 'update'])->name('orders.status');
 Route::post('commandes/{order}/justificatifs', [OrderPaymentController::class, 'storeProof'])->name('orders.proofs.store');
 Route::get('paiements/{payment}/justificatifs/{media}', [OrderPaymentController::class, 'showProof'])->name('orders.proofs.show');
@@ -37,3 +40,8 @@ Route::post('paiements/{payment}/valider', [OrderPaymentController::class, 'vali
 Route::post('paiements/{payment}/refuser', [OrderPaymentController::class, 'rejectPayment'])->name('orders.payments.reject');
 
 Route::resource('livraison', ShippingZoneController::class)->except('show')->parameters(['livraison' => 'zone'])->names('shipping');
+
+Route::get('devis', [QuoteRequestController::class, 'index'])->name('quotes.index');
+Route::get('devis/{quote}', [QuoteRequestController::class, 'show'])->name('quotes.show');
+Route::post('devis/{quote}/reponse', [QuoteRequestController::class, 'reply'])->name('quotes.reply');
+Route::put('devis/{quote}/cloture', [QuoteRequestController::class, 'close'])->name('quotes.close');

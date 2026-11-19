@@ -14,7 +14,7 @@ Installed and in use:
 - spatie/laravel-permission (roles `admin`, `customer`), laravel-settings (`App\Settings\*`), laravel-medialibrary, laravel-sitemap, laravel-sluggable, laravel-honeypot, laravel-phone, resend, mpdf/mpdf (invoices)
 
 Deliberately NOT used (decided with the owner; do not install): **Filament, Livewire, barryvdh/laravel-dompdf**.
-Still to build: PDF invoice generation (mPDF), Markdown mail templates, sitemap/JSON-LD. Admin component kit (DataTable, Modal, ConfirmDialog, FileUpload, ImageInput, TagInput...) exists in `resources/js/admin/Components`.
+Still to build: sitemap/JSON-LD, CMS pages, services, contact form. Admin component kit (DataTable, Modal, ConfirmDialog, FileUpload, ImageInput, TagInput...) exists in `resources/js/admin/Components`.
 Not wired yet: the existing 2FA services (`app/Services/Security`), planned for Phase 6.
 
 ## Common commands
@@ -33,7 +33,9 @@ Not wired yet: the existing 2FA services (`app/Services/Security`), planned for 
 - Order status flow (enum `OrderStatus`): `pending_payment` → `payment_submitted` → `paid` → `processing` → `shipped` → `delivered`, plus `cancelled`. Only legal transitions, each written to a status history, always through `TransitionOrderStatus`. Cash on delivery skips the payment steps (admin confirms: `pending_payment` → `processing`; the cash is recorded at `delivered`). A rejected proof sends the order back to `pending_payment`. Cancelling (before shipping) restocks. Stock is reserved when the order is placed.
 - Orders are reached through a signed link (guests) or ownership (`OrderPolicy`), never by id. Proofs of payment live on the private `local` disk and are only streamed to admins.
 - Shipping within 2 days of payment validation; admin sets the tracking number (required unless the customer uses their own carrier). Cost = zone of the typed city (unmapped cities use the default zone) + weight bracket, from the admin "Livraison" screen (`ShippingCalculator`). Own carrier = note + `ShippingSettings::own_carrier_fee_cents`.
-- Every order gets a detailed PDF invoice (sequential number, stored once payment is validated). B2B customers have company name, **ICE, IF, RC**, shown on the invoice.
+- Every order gets a detailed PDF invoice: issued once, when the payment is validated (cash on delivery: when the admin confirms), numbered `FA-YYYY-00001` without gaps per year (`IssueInvoice`), seller details snapshotted at issue time, PDF rendered on demand by mPDF (`InvoicePdf`) and cached on the private disk. B2B customers have company name, **ICE, IF, RC**, shown on the invoice. Mitek's own ICE/IF/RC live in `GeneralSettings` (admin > Paramètres).
+- Emails (French Markdown mailables in `app/Mail`, views in `resources/views/mail`) are sent by queued after-commit listeners on `OrderPlaced`, `OrderStatusChanged` and `QuoteReplied`: order received, proof received, payment validated (invoice attached) or COD confirmed, proof rejected, shipped, quote replied. **A queue worker must run** (`composer run dev` does) or nothing is sent.
+- Customer area `/compte` (orders, invoices, quotes, addresses, profile with company details); checkout is pre-filled from it. Quote requests (`/devis`) are built from the cart; the admin answers in the back office and the customer is emailed a signed link.
 - Quantity-based B2B price tiers per product, and a quote-request flow (from the cart; admin replies in the back office).
 - IT services are not sold through the cart: each service page has a request form handled in the admin.
 - Money: MAD (DH), VAT 20 % (setting), prices stored **HT as integer centimes**, displayed TTC. Use `App\Support\Money` and `App\Casts\MoneyCast`; never floats.
@@ -61,13 +63,14 @@ From `Mitek.md` and the project (placeholders live in settings, empty until the 
 - Bank RIB/IBAN for STE MITEK SARL AU; Mitek's own ICE/IF/RC/legal mentions for invoices and legal pages
 - Shipping rate grid: the seeded zones, cities and prices are DEMO values; the real grid and own-carrier fee are still needed
 - Seeded catalogue prices/specs are DEMO values too
+- Mitek's own ICE/IF/RC (invoices print `[À COMPLÉTER]` until filled in Paramètres)
 - Legal pages text (mentions légales, CGV, confidentialité), return policy, customer-service hours
 - B2B price-tier rules/discounts, real product catalogue beyond the examples in `Mitek.md`, product images
 - Wording for quote requests and service request emails (not covered in `Mitek.md`)
 
 ## Workflow rules
 
-1. Plan before coding; build phase by phase (Phases 1 foundations, 2 catalog and 3 cart/checkout/payment are done; next: 4 invoices/emails/customer area/quotes, 5 services/CMS/contact/SEO, 6 tests/performance/security).
+1. Plan before coding; build phase by phase (Phases 1 foundations, 2 catalog, 3 cart/checkout/payment and 4 invoices/emails/account/quotes are done; next: 4 invoices/emails/customer area/quotes, 5 services/CMS/contact/SEO, 6 tests/performance/security).
 2. At the end of each phase: run migrations and seeders, run `php artisan test`, run Pint, list the files changed, commit (with a message shown to the owner), then stop for review.
 3. Ask before anything hard to undo: schema shape, adding/removing packages, switching away from Vue/Inertia or Alpine.
 4. Follow the Boost guidelines below (activate the matching skills, use `search-docs` for version-specific APIs).

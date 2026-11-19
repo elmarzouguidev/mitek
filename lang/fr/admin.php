@@ -26,6 +26,10 @@ return [
         'payment_rejected' => 'Justificatif refusé : le client peut en envoyer un autre.',
         'proof_added' => 'Justificatif ajouté à la commande.',
     ],
+    'quotes' => [
+        'replied' => 'Réponse envoyée au client.',
+        'closed' => 'Demande de devis clôturée.',
+    ],
     'shipping' => [
         'saved' => 'Zone de livraison enregistrée.',
         'deleted' => 'Zone de livraison supprimée.',

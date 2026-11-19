@@ -22,6 +22,11 @@ defineProps({
             <p :class="stats.awaiting_validation ? 'text-brand-700' : 'text-slate-900'" class="mt-2 text-3xl font-semibold tracking-tight">{{ stats.awaiting_validation }}</p>
             <p class="mt-1 text-xs text-slate-500">justificatifs reçus, en attente</p>
         </Link>
+        <Link :href="route('admin.quotes.index', { status: 'new' })" class="block rounded-xl bg-white p-5 shadow-xs ring-1 ring-slate-200 hover:ring-brand-300">
+            <p class="text-sm font-medium text-slate-500">Devis à traiter</p>
+            <p :class="stats.new_quotes ? 'text-brand-700' : 'text-slate-900'" class="mt-2 text-3xl font-semibold tracking-tight">{{ stats.new_quotes }}</p>
+            <p class="mt-1 text-xs text-slate-500">demandes sans réponse</p>
+        </Link>
         <StatCard label="Commandes à traiter" :value="stats.to_process" />
         <StatCard label="Chiffre d'affaires (30 jours)" :value="stats.revenue_30_days" />
         <StatCard label="Clients" :value="stats.customers" />

@@ -80,6 +80,25 @@ class OrderFactory extends Factory
         });
     }
 
+    /**
+     * Recomputes the order totals from its lines (call after withItem): shipping stays as set, VAT on it is 20 %.
+     */
+    public function withConsistentTotals(): static
+    {
+        return $this->afterCreating(function (Order $order): void {
+            $items = $order->items()->get();
+            $subtotal = $items->sum(fn (OrderItem $item): int => $item->line_ht->cents);
+            $itemsVat = $items->sum(fn (OrderItem $item): int => $item->line_vat->cents);
+            $shippingVat = $order->shipping_ht->percentage(20)->cents;
+
+            $order->update([
+                'subtotal_ht' => Money::fromCents($subtotal),
+                'vat_total' => Money::fromCents($itemsVat + $shippingVat),
+                'total_ttc' => Money::fromCents($subtotal + $order->shipping_ht->cents + $itemsVat + $shippingVat),
+            ]);
+        });
+    }
+
     public function withHistory(): static
     {
         return $this->afterCreating(fn (Order $order) => OrderStatusHistory::create([

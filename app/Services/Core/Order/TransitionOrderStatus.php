@@ -5,11 +5,13 @@ namespace App\Services\Core\Order;
 use App\Enums\CarrierMode;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentStatus;
+use App\Events\OrderStatusChanged;
 use App\Exceptions\IllegalStatusTransition;
 use App\Models\Core\Order\Order;
 use App\Models\Core\Order\OrderStatusHistory;
 use App\Models\Core\Product\Product;
 use App\Models\User\User;
+use App\Services\Core\Invoice\IssueInvoice;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -19,6 +21,8 @@ use Illuminate\Validation\ValidationException;
  */
 class TransitionOrderStatus
 {
+    public function __construct(private readonly IssueInvoice $invoices) {}
+
     /**
      * @param  array{tracking_number?: string|null, tracking_carrier?: string|null}  $attributes
      *
@@ -27,7 +31,7 @@ class TransitionOrderStatus
      */
     public function handle(Order $order, OrderStatus $to, ?User $by = null, ?string $note = null, array $attributes = []): Order
     {
-        return DB::transaction(function () use ($order, $to, $by, $note, $attributes): Order {
+        [$order, $from] = DB::transaction(function () use ($order, $to, $by, $note, $attributes): array {
             $order = Order::query()->lockForUpdate()->findOrFail($order->id);
             $from = $order->status;
 
@@ -52,6 +56,10 @@ class TransitionOrderStatus
                 $this->recordCashCollected($order, $by);
             }
 
+            if ($to === OrderStatus::Paid || ($to === OrderStatus::Processing && $order->isCashOnDelivery())) {
+                $this->invoices->handle($order);
+            }
+
             OrderStatusHistory::create([
                 'order_id' => $order->id,
                 'from_status' => $from,
@@ -60,8 +68,12 @@ class TransitionOrderStatus
                 'note' => $note,
             ]);
 
-            return $order;
+            return [$order, $from];
         });
+
+        OrderStatusChanged::dispatch($order, $from, $to, $note);
+
+        return $order;
     }
 
     private function stamp(Order $order, OrderStatus $to): void

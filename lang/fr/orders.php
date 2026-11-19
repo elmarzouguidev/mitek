@@ -133,6 +133,7 @@ return [
         'paid_info' => 'Paiement validé : votre commande est en cours de traitement.',
         'dispatch' => 'Expédition sous :days jours après validation du paiement.',
         'cancelled_info' => 'Cette commande a été annulée.',
+        'invoice' => 'Télécharger la facture :number (PDF)',
         'contact' => 'Une question ? Écrivez-nous à :email.',
     ],
 ];

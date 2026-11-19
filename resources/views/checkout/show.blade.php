@@ -5,7 +5,7 @@
 
 <x-layouts.app :title="__('orders.checkout.title')">
     <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8"
-         x-data="checkout({ url: '{{ route('checkout.estimate') }}', city: @js(old('shipping_city', '')), carrier: @js(old('carrier_mode', 'mitek')), payment: @js($initialPayment), isCompany: @js((bool) old('is_company')) })">
+         x-data="checkout({ url: '{{ route('checkout.estimate') }}', city: @js(old('shipping_city', $prefill['shipping_city'] ?? '')), carrier: @js(old('carrier_mode', 'mitek')), payment: @js($initialPayment), isCompany: @js((bool) old('is_company', $prefill['is_company'] ?? false)) })">
         <h1 class="text-3xl font-bold tracking-tight text-brand-900">{{ __('orders.checkout.title') }}</h1>
 
         @foreach ($summary->adjustments as $message)
@@ -26,17 +26,17 @@
                     <div class="grid gap-4 sm:grid-cols-2">
                         <div class="sm:col-span-2">
                             <label for="contact_name" class="block text-sm font-medium text-slate-700">{{ __('orders.checkout.name') }}</label>
-                            <input id="contact_name" name="contact_name" type="text" value="{{ old('contact_name', $user?->name) }}" required autocomplete="name" class="{{ $input }}">
+                            <input id="contact_name" name="contact_name" type="text" value="{{ old('contact_name', $prefill['contact_name'] ?? null) }}" required autocomplete="name" class="{{ $input }}">
                             @error('contact_name')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
                         </div>
                         <div>
                             <label for="contact_email" class="block text-sm font-medium text-slate-700">{{ __('orders.checkout.email') }}</label>
-                            <input id="contact_email" name="contact_email" type="email" value="{{ old('contact_email', $user?->email) }}" required autocomplete="email" class="{{ $input }}">
+                            <input id="contact_email" name="contact_email" type="email" value="{{ old('contact_email', $prefill['contact_email'] ?? null) }}" required autocomplete="email" class="{{ $input }}">
                             @error('contact_email')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
                         </div>
                         <div>
                             <label for="contact_phone" class="block text-sm font-medium text-slate-700">{{ __('orders.checkout.phone') }}</label>
-                            <input id="contact_phone" name="contact_phone" type="tel" value="{{ old('contact_phone') }}" required autocomplete="tel" class="{{ $input }}">
+                            <input id="contact_phone" name="contact_phone" type="tel" value="{{ old('contact_phone', $prefill['contact_phone'] ?? null) }}" required autocomplete="tel" class="{{ $input }}">
                             <p class="mt-1 text-xs text-slate-500">{{ __('orders.checkout.phone_hint') }}</p>
                             @error('contact_phone')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
                         </div>
@@ -51,21 +51,21 @@
                     <div x-cloak x-show="isCompany" class="grid gap-4 sm:grid-cols-2">
                         <div class="sm:col-span-2">
                             <label for="company_name" class="block text-sm font-medium text-slate-700">{{ __('orders.checkout.company_name') }}</label>
-                            <input id="company_name" name="company_name" type="text" value="{{ old('company_name') }}" class="{{ $input }}">
+                            <input id="company_name" name="company_name" type="text" value="{{ old('company_name', $prefill['company_name'] ?? null) }}" class="{{ $input }}">
                             @error('company_name')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
                         </div>
                         <div>
                             <label for="ice" class="block text-sm font-medium text-slate-700">{{ __('orders.checkout.ice') }}</label>
-                            <input id="ice" name="ice" type="text" inputmode="numeric" maxlength="15" value="{{ old('ice') }}" class="{{ $input }}">
+                            <input id="ice" name="ice" type="text" inputmode="numeric" maxlength="15" value="{{ old('ice', $prefill['ice'] ?? null) }}" class="{{ $input }}">
                             @error('ice')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
                         </div>
                         <div>
                             <label for="if_number" class="block text-sm font-medium text-slate-700">{{ __('orders.checkout.if') }}</label>
-                            <input id="if_number" name="if_number" type="text" value="{{ old('if_number') }}" class="{{ $input }}">
+                            <input id="if_number" name="if_number" type="text" value="{{ old('if_number', $prefill['if_number'] ?? null) }}" class="{{ $input }}">
                         </div>
                         <div>
                             <label for="rc_number" class="block text-sm font-medium text-slate-700">{{ __('orders.checkout.rc') }}</label>
-                            <input id="rc_number" name="rc_number" type="text" value="{{ old('rc_number') }}" class="{{ $input }}">
+                            <input id="rc_number" name="rc_number" type="text" value="{{ old('rc_number', $prefill['rc_number'] ?? null) }}" class="{{ $input }}">
                         </div>
                     </div>
                 </section>
@@ -85,11 +85,11 @@
                         </div>
                         <div>
                             <label for="shipping_postal_code" class="block text-sm font-medium text-slate-700">{{ __('orders.checkout.postal_code') }}</label>
-                            <input id="shipping_postal_code" name="shipping_postal_code" type="text" value="{{ old('shipping_postal_code') }}" autocomplete="postal-code" class="{{ $input }}">
+                            <input id="shipping_postal_code" name="shipping_postal_code" type="text" value="{{ old('shipping_postal_code', $prefill['shipping_postal_code'] ?? null) }}" autocomplete="postal-code" class="{{ $input }}">
                         </div>
                         <div class="sm:col-span-2">
                             <label for="shipping_address" class="block text-sm font-medium text-slate-700">{{ __('orders.checkout.address') }}</label>
-                            <textarea id="shipping_address" name="shipping_address" rows="2" required autocomplete="street-address" class="{{ $input }}">{{ old('shipping_address') }}</textarea>
+                            <textarea id="shipping_address" name="shipping_address" rows="2" required autocomplete="street-address" class="{{ $input }}">{{ old('shipping_address', $prefill['shipping_address'] ?? null) }}</textarea>
                             @error('shipping_address')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
                         </div>
                     </div>

@@ -36,6 +36,7 @@
                     @endif
                 </a>
                 @auth
+                    <a href="{{ route('account.index') }}" class="text-slate-700 hover:text-brand-700">{{ __('app.nav.account') }}</a>
                     @if (auth()->user()->isAdmin())
                         <a href="{{ route('admin.dashboard') }}" class="text-slate-700 hover:text-brand-700">{{ __('app.nav.admin') }}</a>
                     @endif
@@ -86,6 +87,7 @@
                 <a href="{{ route('categories.show', $root['slug']) }}" class="block rounded-lg px-3 py-2 hover:bg-slate-100">{{ $root['name'] }}</a>
             @endforeach
             @auth
+                <a href="{{ route('account.index') }}" class="block rounded-lg px-3 py-2 hover:bg-slate-100">{{ __('app.nav.account') }}</a>
                 @if (auth()->user()->isAdmin())
                     <a href="{{ route('admin.dashboard') }}" class="block rounded-lg px-3 py-2 hover:bg-slate-100">{{ __('app.nav.admin') }}</a>
                 @endif

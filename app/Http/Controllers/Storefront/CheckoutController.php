@@ -31,7 +31,7 @@ class CheckoutController extends Controller
 
         return view('checkout.show', [
             'summary' => $summary,
-            'user' => $request->user(),
+            'prefill' => $this->prefill($request),
             'cities' => MoroccanCities::all(),
             'methods' => PaymentMethod::cases(),
             'codLimit' => $rules->codLimit(),
@@ -73,5 +73,36 @@ class CheckoutController extends Controller
         return redirect()
             ->to(URL::signedRoute('orders.show', $order))
             ->with('success', __('orders.placed', ['reference' => $order->reference]));
+    }
+
+    /**
+     * Pre-fills the form from the account: identity, company details (profile) and the default address.
+     *
+     * @return array<string, mixed>
+     */
+    private function prefill(Request $request): array
+    {
+        $user = $request->user();
+
+        if ($user === null) {
+            return [];
+        }
+
+        $profile = $user->profile()->first();
+        $address = $user->addresses()->where('is_default', true)->first() ?? $user->addresses()->first();
+
+        return [
+            'contact_name' => $address?->contact_name ?? $user->name,
+            'contact_email' => $user->email,
+            'contact_phone' => $address?->phone ?? $profile?->phone,
+            'is_company' => $profile?->isCompany() ?? false,
+            'company_name' => $profile?->company_name,
+            'ice' => $profile?->ice,
+            'if_number' => $profile?->if_number,
+            'rc_number' => $profile?->rc_number,
+            'shipping_city' => $address?->city,
+            'shipping_address' => $address?->address,
+            'shipping_postal_code' => $address?->postal_code,
+        ];
     }
 }

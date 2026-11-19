@@ -168,6 +168,10 @@ const actionLabels = {
                 <p v-if="$page.props.flash?.error" class="mt-3 text-sm text-red-600">{{ $page.props.flash.error }}</p>
             </Card>
 
+            <Card v-if="order.invoice" title="Facture">
+                <a :href="order.invoice.url" target="_blank" rel="noopener" class="text-sm font-medium text-brand-700 hover:underline">Télécharger {{ order.invoice.number }} (PDF)</a>
+            </Card>
+
             <Card title="Client">
                 <p class="font-medium">{{ order.contact.name }}</p>
                 <p class="text-sm text-slate-600">{{ order.contact.email }}<br />{{ order.contact.phone }}</p>

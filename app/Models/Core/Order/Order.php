@@ -6,6 +6,7 @@ use App\Casts\MoneyCast;
 use App\Enums\CarrierMode;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentMethod;
+use App\Models\Core\Invoice\Invoice;
 use App\Models\Core\Shipping\ShippingZone;
 use App\Models\User\User;
 use App\Policies\OrderPolicy;
@@ -16,6 +17,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 #[UsePolicy(OrderPolicy::class)]
 class Order extends Model
@@ -58,6 +60,14 @@ class Order extends Model
     public function shippingZone(): BelongsTo
     {
         return $this->belongsTo(ShippingZone::class);
+    }
+
+    /**
+     * @return HasOne<Invoice, $this>
+     */
+    public function invoice(): HasOne
+    {
+        return $this->hasOne(Invoice::class);
     }
 
     /**

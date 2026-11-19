@@ -5,6 +5,7 @@ namespace App\Services\Core\Order;
 use App\Enums\CarrierMode;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentMethod;
+use App\Events\OrderPlaced;
 use App\Exceptions\ShippingUnavailable;
 use App\Http\Requests\CheckoutRequest;
 use App\Models\Core\Order\Order;
@@ -118,6 +119,8 @@ class PlaceOrder
         });
 
         $this->cart->clear();
+
+        OrderPlaced::dispatch($order);
 
         return $order;
     }

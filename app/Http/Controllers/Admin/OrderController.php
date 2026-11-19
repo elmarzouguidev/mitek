@@ -63,7 +63,7 @@ class OrderController extends Controller
     {
         Gate::authorize('view', $order);
 
-        $order->load(['items', 'payments.media', 'history.user']);
+        $order->load(['items', 'payments.media', 'history.user', 'invoice']);
 
         return Inertia::render('Orders/Show', [
             'order' => OrderDetailResource::make($order)->resolve(),

@@ -1,5 +1,10 @@
 <?php
 
+use App\Http\Controllers\Account\AddressController;
+use App\Http\Controllers\Account\DashboardController as AccountDashboardController;
+use App\Http\Controllers\Account\OrderController as AccountOrderController;
+use App\Http\Controllers\Account\ProfileController;
+use App\Http\Controllers\Account\QuoteController as AccountQuoteController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -8,10 +13,13 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Storefront\CartController;
 use App\Http\Controllers\Storefront\CategoryController;
 use App\Http\Controllers\Storefront\CheckoutController;
+use App\Http\Controllers\Storefront\InvoiceController;
 use App\Http\Controllers\Storefront\OrderController;
 use App\Http\Controllers\Storefront\ProductController;
+use App\Http\Controllers\Storefront\QuoteController;
 use App\Http\Controllers\Storefront\SearchController;
 use App\Http\Middleware\EnsureOrderAccess;
+use App\Http\Middleware\EnsureQuoteAccess;
 use Illuminate\Support\Facades\Route;
 use Spatie\Honeypot\ProtectAgainstSpam;
 
@@ -32,8 +40,13 @@ Route::get('commande', [CheckoutController::class, 'show'])->name('checkout.show
 Route::get('commande/estimation', [CheckoutController::class, 'estimate'])->middleware('throttle:60,1')->name('checkout.estimate');
 Route::post('commande', [CheckoutController::class, 'store'])->middleware([ProtectAgainstSpam::class, 'throttle:10,1'])->name('checkout.store');
 
+Route::get('devis', [QuoteController::class, 'create'])->name('quotes.create');
+Route::post('devis', [QuoteController::class, 'store'])->middleware([ProtectAgainstSpam::class, 'throttle:10,1'])->name('quotes.store');
+Route::get('devis/{quote:uuid}', [QuoteController::class, 'show'])->middleware(EnsureQuoteAccess::class)->name('quotes.show');
+
 Route::middleware(EnsureOrderAccess::class)->group(function (): void {
     Route::get('commande/{order:uuid}', [OrderController::class, 'show'])->name('orders.show');
+    Route::get('commande/{order:uuid}/facture', [InvoiceController::class, 'show'])->name('orders.invoice');
     Route::post('commande/{order:uuid}/justificatif', [OrderController::class, 'storeProof'])->middleware('throttle:20,1')->name('orders.proof.store');
 });
 
@@ -49,3 +62,19 @@ Route::middleware('guest')->group(function (): void {
 });
 
 Route::post('deconnexion', [LoginController::class, 'destroy'])->middleware('auth')->name('logout');
+
+Route::middleware('auth')->prefix('compte')->name('account.')->group(function (): void {
+    Route::get('/', AccountDashboardController::class)->name('index');
+    Route::get('commandes', [AccountOrderController::class, 'index'])->name('orders');
+    Route::get('devis', [AccountQuoteController::class, 'index'])->name('quotes');
+
+    Route::get('adresses', [AddressController::class, 'index'])->name('addresses');
+    Route::post('adresses', [AddressController::class, 'store'])->name('addresses.store');
+    Route::get('adresses/{address}/modifier', [AddressController::class, 'edit'])->name('addresses.edit');
+    Route::put('adresses/{address}', [AddressController::class, 'update'])->name('addresses.update');
+    Route::delete('adresses/{address}', [AddressController::class, 'destroy'])->name('addresses.destroy');
+
+    Route::get('informations', [ProfileController::class, 'edit'])->name('profile');
+    Route::put('informations', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('mot-de-passe', [ProfileController::class, 'updatePassword'])->name('password.update');
+});

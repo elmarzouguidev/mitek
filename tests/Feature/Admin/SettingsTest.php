@@ -92,3 +92,20 @@ it('forbids customers from changing settings', function () {
 
     expect(app(PaymentSettings::class)->cod_limit_cents)->toBe(200000);
 });
+
+it('stores the company identifiers printed on invoices', function () {
+    $this->actingAs($this->admin)
+        ->put(route('admin.settings.general'), [
+            'site_name' => 'Mitek.ma', 'legal_name' => 'STE MITEK SARL AU', 'email' => 'contact@mitek.ma', 'address' => 'Casablanca, Maroc', 'vat_rate' => 20,
+            'ice' => '001234567000089', 'if_number' => '12345678', 'rc_number' => '98765',
+        ])->assertSessionHasNoErrors();
+
+    expect(app(GeneralSettings::class))->ice->toBe('001234567000089')->if_number->toBe('12345678')->rc_number->toBe('98765');
+});
+
+it('validates the ICE', function () {
+    $this->actingAs($this->admin)
+        ->put(route('admin.settings.general'), [
+            'site_name' => 'Mitek.ma', 'legal_name' => 'STE MITEK SARL AU', 'email' => 'contact@mitek.ma', 'address' => 'Casablanca', 'vat_rate' => 20, 'ice' => '123',
+        ])->assertSessionHasErrors('ice');
+});
