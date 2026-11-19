@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import { Head, useForm } from '@inertiajs/vue3';
+import TabBar from '../../Components/TabBar.vue';
 import Button from '../../Components/Button.vue';
 import Card from '../../Components/Card.vue';
 import Checkbox from '../../Components/Checkbox.vue';
@@ -106,20 +107,7 @@ function toggleDay(day) {
 
     <h1 class="text-2xl font-semibold tracking-tight">Paramètres</h1>
 
-    <div class="mt-4 flex gap-1 overflow-x-auto border-b border-slate-200" role="tablist">
-        <button
-            v-for="item in tabs"
-            :key="item.key"
-            type="button"
-            role="tab"
-            :aria-selected="tab === item.key"
-            :class="tab === item.key ? 'border-brand-700 text-brand-700' : 'border-transparent text-slate-600 hover:text-slate-900'"
-            class="-mb-px shrink-0 border-b-2 px-4 py-2.5 text-sm font-medium"
-            @click="tab = item.key"
-        >
-            {{ item.label }}
-        </button>
-    </div>
+    <TabBar v-model="tab" class="mt-4" :tabs="tabs" />
 
     <div class="mt-6 max-w-3xl space-y-6">
         <form v-show="tab === 'general'" @submit.prevent="generalForm.put(route('admin.settings.general'), { preserveScroll: true })">

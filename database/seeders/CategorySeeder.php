@@ -13,6 +13,14 @@ class CategorySeeder extends Seeder
     /**
      * @var array<string, array{description: string, children: array<string, string>}>
      */
+    private const SHORT_NAMES = [
+        'Consommables & Toners' => 'Consommables & toners',
+        'Équipements informatiques & Accessoires' => 'Informatique',
+        'Matériel de bureau & Papeterie' => 'Bureau & papeterie',
+        'Mobilier & Organisation du travail' => 'Mobilier',
+        'Autres consommables & Hygiène' => 'Hygiène & entretien',
+    ];
+
     private const TREE = [
         'Consommables & Toners' => [
             'description' => "Cartouches et toners d'origine pour HP, Lexmark, Canon et Brother, ainsi que les rubans pour étiqueteuses.",
@@ -65,6 +73,7 @@ class CategorySeeder extends Seeder
 
         foreach (self::TREE as $name => $family) {
             $root = Category::firstOrCreate(['name' => $name], [
+                'short_name' => self::SHORT_NAMES[$name] ?? null,
                 'description' => $family['description'],
                 'sort_order' => ++$position,
             ]);

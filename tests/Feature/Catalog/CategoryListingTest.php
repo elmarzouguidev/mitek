@@ -177,6 +177,7 @@ it('does not run extra queries per product on a listing page', function () {
     $withOne = $queries();
 
     Product::factory()->count(11)->for($this->toners)->withBrand()->withTiers([3 => 5])->create();
+    $queries(); // creating products flushed the cached menu
     $withTwelve = $queries();
 
     expect($withTwelve)->toBe($withOne);

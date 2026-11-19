@@ -10,6 +10,7 @@ use App\Models\Core\Product\Product;
 use App\Models\Core\Service\Service;
 use App\Services\Core\Cart\CartService;
 use App\Services\Core\Product\CatalogMenu;
+use App\Settings\AnnouncementSettings;
 use App\Settings\GeneralSettings;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
@@ -93,6 +94,9 @@ class AppServiceProvider extends ServiceProvider
         View::composer('components.layouts.app', function ($view): void {
             $view->with('site', app(GeneralSettings::class));
             $view->with('menu', app(CatalogMenu::class)->tree());
+            $announcement = app(AnnouncementSettings::class);
+            $view->with('announcement', $announcement);
+            $view->with('announcementHash', substr(sha1($announcement->text.'|'.$announcement->link_url.'|'.$announcement->link_label), 0, 10));
             $view->with('cartCount', app(CartService::class)->count());
         });
     }

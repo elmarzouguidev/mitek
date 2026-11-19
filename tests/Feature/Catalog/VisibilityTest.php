@@ -48,8 +48,8 @@ it('hides inactive products from category listings, search and suggestions', fun
         ->assertDontSee('Hidden Scanner');
 
     $this->getJson(route('search.suggestions', ['q' => 'Scanner']))
-        ->assertJsonCount(1, 'data')
-        ->assertJsonPath('data.0.name', 'Visible Scanner');
+        ->assertJsonCount(1, 'groups.0.items')
+        ->assertJsonPath('groups.0.items.0.label', 'Visible Scanner');
 });
 
 it('hides products whose category is inactive', function () {

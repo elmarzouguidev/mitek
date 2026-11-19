@@ -27,6 +27,7 @@ class CategoryRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
+            'short_name' => ['nullable', 'string', 'max:60'],
             'parent_id' => ['nullable', 'integer', Rule::exists('categories', 'id')->whereNull('parent_id')],
             'description' => ['nullable', 'string', 'max:5000'],
             'sort_order' => ['required', 'integer', 'min:0', 'max:100000'],

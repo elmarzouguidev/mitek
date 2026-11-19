@@ -1,6 +1,7 @@
 <script setup>
 import { computed, ref } from 'vue';
 import { Head, Link, router, useForm } from '@inertiajs/vue3';
+import TabBar from '../../Components/TabBar.vue';
 import Button from '../../Components/Button.vue';
 import Card from '../../Components/Card.vue';
 import Checkbox from '../../Components/Checkbox.vue';
@@ -90,21 +91,7 @@ const error = (key) => form.errors[key] ?? null;
     </PageHeader>
 
     <form class="max-w-4xl" @submit.prevent="submit">
-        <div class="mb-6 flex gap-1 overflow-x-auto border-b border-slate-200" role="tablist">
-            <button
-                v-for="tab in tabs"
-                :key="tab.key"
-                type="button"
-                role="tab"
-                :aria-selected="activeTab === tab.key"
-                :class="activeTab === tab.key ? 'border-brand-700 text-brand-700' : 'border-transparent text-slate-600 hover:text-slate-900'"
-                class="-mb-px flex shrink-0 items-center gap-1.5 border-b-2 px-4 py-2.5 text-sm font-medium"
-                @click="activeTab = tab.key"
-            >
-                {{ tab.label }}
-                <span v-if="tabsWithErrors.includes(tab.key)" class="size-2 rounded-full bg-red-500" title="Erreurs dans cet onglet" />
-            </button>
-        </div>
+        <TabBar v-model="activeTab" class="mb-6" :tabs="tabs" :error-keys="tabsWithErrors" />
 
         <Card v-show="activeTab === 'general'" title="Informations générales">
             <div class="grid gap-4 sm:grid-cols-2">

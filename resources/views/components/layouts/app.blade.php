@@ -33,93 +33,18 @@
     @foreach ($schemas as $schema)
         <script type="application/ld+json">{!! \App\Support\Seo::json($schema) !!}</script>
     @endforeach
+    @if ($announcement->isVisible() && $announcement->dismissible)
+        <script>try{if(localStorage.getItem('mitek_announce_{{ $announcementHash }}'))document.documentElement.classList.add('announce-dismissed')}catch(e){}</script>
+        <style>.announce-dismissed [data-announcement]{display:none}</style>
+    @endif
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="flex min-h-screen flex-col bg-white font-sans text-slate-800 antialiased">
-    <header class="border-b border-slate-200 bg-white" x-data="{ open: false }">
-        <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-            <a href="{{ route('home') }}" class="flex items-center" aria-label="{{ $site->site_name }}">
-                <img src="{{ asset('images/logo-mitek.png') }}" alt="{{ $site->site_name }}" class="h-10 w-auto">
-            </a>
-
-            <nav class="hidden items-center gap-6 text-sm font-medium md:flex" aria-label="Navigation principale">
-                <a href="{{ route('home') }}" class="text-slate-700 hover:text-brand-700">{{ __('app.nav.home') }}</a>
-                <a href="{{ route('services.index') }}" class="text-slate-700 hover:text-brand-700">{{ __('app.nav.services') }}</a>
-                <a href="{{ route('contact') }}" class="text-slate-700 hover:text-brand-700">{{ __('app.nav.contact') }}</a>
-                <a href="{{ route('cart.show') }}" class="relative text-slate-700 hover:text-brand-700">
-                    {{ __('orders.cart.title') }}
-                    @if ($cartCount > 0)
-                        <span class="ml-1 inline-flex min-w-5 items-center justify-center rounded-full bg-brand-700 px-1.5 text-xs font-semibold text-white">{{ $cartCount }}</span>
-                    @endif
-                </a>
-                @auth
-                    <a href="{{ route('account.index') }}" class="text-slate-700 hover:text-brand-700">{{ __('app.nav.account') }}</a>
-                    @if (auth()->user()->isAdmin())
-                        <a href="{{ route('admin.dashboard') }}" class="text-slate-700 hover:text-brand-700">{{ __('app.nav.admin') }}</a>
-                    @endif
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="text-slate-700 hover:text-brand-700">{{ __('app.nav.logout') }}</button>
-                    </form>
-                @else
-                    <a href="{{ route('login') }}" class="text-slate-700 hover:text-brand-700">{{ __('app.nav.login') }}</a>
-                    <a href="{{ route('register') }}" class="rounded-lg bg-brand-700 px-4 py-2 text-white hover:bg-brand-800">{{ __('app.nav.register') }}</a>
-                @endauth
-            </nav>
-
-            <button type="button" class="rounded-lg p-2 text-slate-700 hover:bg-slate-100 md:hidden" aria-label="Menu" @click="open = !open" :aria-expanded="open">
-                <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5" /></svg>
-            </button>
-        </div>
-
-        <div class="border-t border-slate-100 bg-slate-50">
-            <div class="mx-auto max-w-7xl px-4 py-3 sm:px-6 lg:px-8">
-                <x-search-box />
-            </div>
-        </div>
-
-        @if ($menu !== [])
-            <nav class="hidden border-t border-slate-100 md:block" aria-label="Catégories">
-                <ul class="mx-auto flex max-w-7xl flex-wrap gap-x-6 px-4 sm:px-6 lg:px-8">
-                    @foreach ($menu as $root)
-                        <li class="relative" x-data="{ show: false }" @mouseenter="show = true" @mouseleave="show = false" @keydown.escape="show = false">
-                            <a href="{{ route('categories.show', $root['slug']) }}" class="block py-2.5 text-sm font-medium text-slate-700 hover:text-brand-700" @focus="show = true">{{ $root['name'] }}</a>
-                            @if ($root['children'] !== [])
-                                <ul x-cloak x-show="show" class="absolute left-0 top-full z-30 w-64 rounded-b-lg bg-white py-2 shadow-lg ring-1 ring-slate-200">
-                                    @foreach ($root['children'] as $child)
-                                        <li><a href="{{ route('categories.show', $child['slug']) }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-brand-50 hover:text-brand-800">{{ $child['name'] }}</a></li>
-                                    @endforeach
-                                </ul>
-                            @endif
-                        </li>
-                    @endforeach
-                </ul>
-            </nav>
-        @endif
-
-        <nav x-cloak x-show="open" class="space-y-1 border-t border-slate-200 px-4 py-3 text-sm font-medium md:hidden" aria-label="Navigation mobile">
-            <a href="{{ route('home') }}" class="block rounded-lg px-3 py-2 hover:bg-slate-100">{{ __('app.nav.home') }}</a>
-            <a href="{{ route('services.index') }}" class="block rounded-lg px-3 py-2 hover:bg-slate-100">{{ __('app.nav.services') }}</a>
-            <a href="{{ route('contact') }}" class="block rounded-lg px-3 py-2 hover:bg-slate-100">{{ __('app.nav.contact') }}</a>
-            <a href="{{ route('cart.show') }}" class="block rounded-lg px-3 py-2 hover:bg-slate-100">{{ __('orders.cart.title') }}@if ($cartCount > 0) ({{ $cartCount }})@endif</a>
-            @foreach ($menu as $root)
-                <a href="{{ route('categories.show', $root['slug']) }}" class="block rounded-lg px-3 py-2 hover:bg-slate-100">{{ $root['name'] }}</a>
-            @endforeach
-            @auth
-                <a href="{{ route('account.index') }}" class="block rounded-lg px-3 py-2 hover:bg-slate-100">{{ __('app.nav.account') }}</a>
-                @if (auth()->user()->isAdmin())
-                    <a href="{{ route('admin.dashboard') }}" class="block rounded-lg px-3 py-2 hover:bg-slate-100">{{ __('app.nav.admin') }}</a>
-                @endif
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit" class="block w-full rounded-lg px-3 py-2 text-left hover:bg-slate-100">{{ __('app.nav.logout') }}</button>
-                </form>
-            @else
-                <a href="{{ route('login') }}" class="block rounded-lg px-3 py-2 hover:bg-slate-100">{{ __('app.nav.login') }}</a>
-                <a href="{{ route('register') }}" class="block rounded-lg px-3 py-2 hover:bg-slate-100">{{ __('app.nav.register') }}</a>
-            @endauth
-        </nav>
-    </header>
+<body class="flex min-h-screen flex-col bg-white font-sans text-slate-800 antialiased" x-data="siteShell()" @scroll.window.passive="onScroll()">
+    <x-layout.announcement :announcement="$announcement" :hash="$announcementHash" />
+    <x-layout.topbar :site="$site" />
+    <x-layout.header :site="$site" :cart-count="$cartCount" />
+    <x-layout.nav :menu="$menu" :site="$site" />
+    <x-layout.drawer :menu="$menu" :site="$site" :cart-count="$cartCount" />
 
     <main class="flex-1">
         @if (session('success') || session('error') || $errors->hasAny(['cart', 'quantite', 'payment']))

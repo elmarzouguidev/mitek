@@ -29,6 +29,10 @@
                 @foreach ($items as $key => [$route, $label])
                     <a href="{{ route($route) }}" @if ($active === $key) aria-current="page" @endif class="whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium {{ $active === $key ? 'bg-brand-50 text-brand-800' : 'text-slate-600 hover:bg-slate-100' }}">{{ $label }}</a>
                 @endforeach
+                <form method="POST" action="{{ route('logout') }}" class="lg:mt-2 lg:border-t lg:border-slate-200 lg:pt-2">
+                    @csrf
+                    <button type="submit" class="w-full whitespace-nowrap rounded-lg px-3 py-2 text-left text-sm font-medium text-slate-600 hover:bg-slate-100">{{ __('app.nav.logout') }}</button>
+                </form>
             </nav>
 
             <div>{{ $slot }}</div>

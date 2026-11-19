@@ -3,6 +3,7 @@
 namespace App\Models\Core\Product;
 
 use App\Policies\CategoryPolicy;
+use App\Services\Core\Product\CatalogMenu;
 use App\Traits\HasSlug;
 use App\Traits\UuidGenerator;
 use Database\Factories\Core\Product\CategoryFactory;
@@ -12,7 +13,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Facades\Cache;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -28,7 +28,7 @@ class Category extends Model implements HasMedia
 
     protected static function booted(): void
     {
-        $flushMenu = fn () => Cache::forget(self::MENU_CACHE_KEY);
+        $flushMenu = fn () => CatalogMenu::flush();
 
         static::saved($flushMenu);
         static::deleted($flushMenu);
@@ -99,6 +99,14 @@ class Category extends Model implements HasMedia
     public function scopeOrdered(Builder $query): Builder
     {
         return $query->orderBy('sort_order')->orderBy('name');
+    }
+
+    /**
+     * Compact label for the navigation row (falls back to the full name).
+     */
+    public function menuName(): string
+    {
+        return $this->short_name ?: $this->name;
     }
 
     public function isRoot(): bool

@@ -137,6 +137,7 @@ return [
         'maps_embed_url' => 'lien Google Maps',
         'vat_rate' => 'taux de TVA',
         'label' => 'nom de l\'adresse',
+        'short_name' => 'nom court',
         'contact_name' => 'nom',
         'current_password' => 'mot de passe actuel',
         'city' => 'ville',

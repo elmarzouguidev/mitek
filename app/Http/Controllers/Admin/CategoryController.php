@@ -55,7 +55,7 @@ class CategoryController extends Controller
 
         return Inertia::render('Categories/Form', [
             'category' => [
-                ...$category->only(['id', 'name', 'parent_id', 'description', 'sort_order', 'is_active', 'meta_title', 'meta_description']),
+                ...$category->only(['id', 'name', 'short_name', 'parent_id', 'description', 'sort_order', 'is_active', 'meta_title', 'meta_description']),
                 'image_url' => $category->getFirstMediaUrl('image', 'card') ?: null,
             ],
             'parents' => $this->parents($category),

@@ -20,6 +20,7 @@ const isEdit = props.category !== null;
 const form = useForm({
     _method: isEdit ? 'put' : 'post',
     name: props.category?.name ?? '',
+    short_name: props.category?.short_name ?? '',
     parent_id: props.category?.parent_id ?? '',
     description: props.category?.description ?? '',
     sort_order: props.category?.sort_order ?? 0,
@@ -45,6 +46,9 @@ function submit() {
             <div class="grid gap-4 sm:grid-cols-2">
                 <FormField label="Nom" for="name" :error="form.errors.name">
                     <TextInput id="name" v-model="form.name" :invalid="!!form.errors.name" />
+                </FormField>
+                <FormField label="Nom court (menu)" for="short_name" hint="Libellé compact de la barre de navigation. Vide : le nom complet." :error="form.errors.short_name">
+                    <TextInput id="short_name" v-model="form.short_name" :invalid="!!form.errors.short_name" />
                 </FormField>
                 <FormField label="Catégorie parente" for="parent_id" hint="Laissez vide pour une catégorie principale." :error="form.errors.parent_id">
                     <Select id="parent_id" v-model="form.parent_id" :options="parents" placeholder="— Aucune (catégorie principale) —" :invalid="!!form.errors.parent_id" />

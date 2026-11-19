@@ -4,6 +4,7 @@ namespace App\Models\Core\Product;
 
 use App\Casts\MoneyCast;
 use App\Policies\ProductPolicy;
+use App\Services\Core\Product\CatalogMenu;
 use App\Traits\HasSlug;
 use App\Traits\UuidGenerator;
 use Database\Factories\Core\Product\ProductFactory;
@@ -27,6 +28,15 @@ class Product extends Model implements HasMedia
     use HasFactory, HasSlug, InteractsWithMedia, SoftDeletes, UuidGenerator;
 
     public const GALLERY = 'gallery';
+
+    protected static function booted(): void
+    {
+        $flushMenu = fn () => CatalogMenu::flush();
+
+        static::saved($flushMenu);
+        static::deleted($flushMenu);
+        static::restored($flushMenu);
+    }
 
     /**
      * @return array<string, string>

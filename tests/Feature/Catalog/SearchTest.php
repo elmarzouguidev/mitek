@@ -45,7 +45,7 @@ it('treats LIKE wildcards in the query as plain characters', function () {
         ->assertDontSee('Toner noir 312A')
         ->assertDontSee('Cahier spirale');
 
-    $this->getJson(route('search.suggestions', ['q' => '__']))->assertJsonCount(0, 'data');
+    $this->getJson(route('search.suggestions', ['q' => '__']))->assertJsonPath('groups', []);
 });
 
 it('asks for a longer query when it is too short', function () {
@@ -67,26 +67,49 @@ it('does not fail on an oversized query', function () {
     $this->get(route('search', ['q' => str_repeat('a', 5000)]))->assertOk();
 });
 
-it('suggests at most 8 products with the fields the autocomplete needs', function () {
+it('suggests at most 5 products with the fields the autocomplete needs', function () {
     Product::factory()->count(12)->sequence(fn ($sequence) => ['name' => 'Ramette papier '.$sequence->index])->create();
 
     $response = $this->getJson(route('search.suggestions', ['q' => 'ramette']))
         ->assertOk()
-        ->assertJsonCount(8, 'data')
-        ->assertJsonStructure(['data' => [['name', 'reference', 'brand', 'price', 'image', 'url']]]);
+        ->assertJsonPath('groups.0.key', 'products')
+        ->assertJsonCount(5, 'groups.0.items')
+        ->assertJsonStructure(['term', 'all_url', 'groups' => [['key', 'label', 'items' => [['label', 'sub', 'price', 'image', 'url']]]]]);
 
-    expect($response->json('data.0.url'))->toStartWith(url('/produit/'));
+    expect($response->json('groups.0.items.0.url'))->toStartWith(url('/produit/'))
+        ->and($response->json('all_url'))->toBe(route('search', ['q' => 'ramette']));
+});
+
+it('groups products, brands and printer models', function () {
+    $groups = collect($this->getJson(route('search.suggestions', ['q' => 'HP']))->json('groups'))->pluck('key');
+    expect($groups)->toContain('products')->toContain('brands');
+
+    $groups = collect($this->getJson(route('search.suggestions', ['q' => 'LaserJet']))->json('groups'))->pluck('key');
+    expect($groups)->toContain('printers');
+});
+
+it('does not suggest hidden products', function () {
+    Product::factory()->create(['name' => 'Ramette cachée', 'is_active' => false]);
+
+    $this->getJson(route('search.suggestions', ['q' => 'cachée']))->assertJsonPath('groups', []);
 });
 
 it('returns no suggestions for a query shorter than two characters', function () {
-    $this->getJson(route('search.suggestions', ['q' => 't']))->assertOk()->assertExactJson(['data' => []]);
+    $this->getJson(route('search.suggestions', ['q' => 't']))->assertOk()->assertJsonPath('groups', []);
 });
 
 it('ranks an exact reference match first', function () {
     Product::factory()->create(['name' => 'Accessoire CF380A compatible', 'reference' => 'ACC-1']);
 
     $this->getJson(route('search.suggestions', ['q' => 'CF380A']))
-        ->assertJsonPath('data.0.reference', 'CF380A');
+        ->assertJsonPath('groups.0.items.0.sub', fn ($sub) => str_contains($sub, 'CF380A'));
+});
+
+it('caches suggestions for a short time per normalised term', function () {
+    $this->getJson(route('search.suggestions', ['q' => 'Toner']))->assertOk();
+    Product::query()->where('reference', 'CF380A')->delete();
+
+    $this->getJson(route('search.suggestions', ['q' => ' toner ']))->assertJsonPath('groups.0.key', 'products');
 });
 
 it('throttles the suggestions endpoint', function () {

@@ -1,31 +1,51 @@
 /**
- * Search autocomplete: debounced calls to the JSON suggestions endpoint (max 8 results).
+ * Header search: an ARIA combobox with grouped suggestions (products, categories, brands, printers,
+ * services). Without JavaScript the form still submits to the search page.
  *
  * @param {string} url suggestions endpoint
+ * @param {{search: string, all: string, none: string, count: string}} labels ":term" and ":count" are replaced
  */
-export default (url) => ({
+export default (url, labels) => ({
     url,
+    labels,
     query: '',
-    results: [],
+    groups: [],
+    flat: [],
     open: false,
-    highlighted: -1,
+    active: -1,
+    status: '',
     timer: null,
     controller: null,
 
+    get allUrl() {
+        return `${this.labels.search}?q=${encodeURIComponent(this.query.trim())}`;
+    },
+
+    get allLabel() {
+        return this.labels.all.replace(':term', this.query.trim());
+    },
+
+    /** The "see all results" row is the last option. */
+    get lastIndex() {
+        return this.flat.length;
+    },
+
     onInput() {
         clearTimeout(this.timer);
+        this.active = -1;
 
         if (this.query.trim().length < 2) {
-            this.results = [];
-            this.open = false;
+            this.close();
+            this.groups = [];
+            this.flat = [];
 
             return;
         }
 
-        this.timer = setTimeout(() => this.fetchResults(), 250);
+        this.timer = setTimeout(() => this.fetchSuggestions(), 200);
     },
 
-    async fetchResults() {
+    async fetchSuggestions() {
         this.controller?.abort();
         this.controller = new AbortController();
 
@@ -35,11 +55,20 @@ export default (url) => ({
                 signal: this.controller.signal,
             });
 
-            if (response.ok) {
-                this.results = (await response.json()).data;
-                this.highlighted = -1;
-                this.open = this.results.length > 0;
+            if (!response.ok) {
+                return;
             }
+
+            const body = await response.json();
+            let index = 0;
+
+            this.groups = body.groups.map((group) => ({
+                ...group,
+                items: group.items.map((item) => ({ ...item, index: index++ })),
+            }));
+            this.flat = this.groups.flatMap((group) => group.items);
+            this.open = true;
+            this.status = this.flat.length ? this.labels.count.replace(':count', this.flat.length) : this.labels.none;
         } catch (error) {
             if (error.name !== 'AbortError') {
                 console.error(error);
@@ -49,22 +78,38 @@ export default (url) => ({
 
     move(step) {
         if (!this.open) {
+            if (this.flat.length) {
+                this.open = true;
+            }
+
             return;
         }
 
-        this.highlighted = (this.highlighted + step + this.results.length) % this.results.length;
+        const total = this.flat.length + 1;
+        this.active = this.active === -1 && step < 0 ? total - 1 : (this.active + step + total) % total;
+        this.$nextTick(() => document.getElementById(`sb-opt-${this.active}`)?.scrollIntoView({ block: 'nearest' }));
     },
 
-    /** Enter goes to the highlighted suggestion, otherwise the form submits to the full results page. */
+    /** Enter on an active option follows it; otherwise the form submits to the results page. */
     choose(event) {
-        if (this.open && this.highlighted >= 0) {
-            event.preventDefault();
-            window.location.href = this.results[this.highlighted].url;
+        if (!this.open || this.active < 0) {
+            return;
         }
+
+        event.preventDefault();
+        window.location.href = this.active === this.lastIndex ? this.allUrl : this.flat[this.active].url;
     },
 
     close() {
         this.open = false;
-        this.highlighted = -1;
+        this.active = -1;
+    },
+
+    onEscape() {
+        if (this.open) {
+            this.close();
+        } else {
+            this.query = '';
+        }
     },
 });
