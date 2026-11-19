@@ -1,3 +1,74 @@
+# MitekStore — project instructions
+
+## Project overview
+
+B2B e-commerce site for **Mitek.ma** (STE MITEK SARL AU, Casablanca, Morocco): office supplies, toner and consumables, IT equipment, furniture, hygiene products, plus IT services (maintenance, network/Wi-Fi, cybersecurity, cloud, data recovery, custom PCs, audits, email setup).
+**`Mitek.md` (project root) is the source of truth for all site copy, categories, FAQ, payment and delivery rules.** Never invent business facts; if something is missing, leave a visible `TODO` placeholder. The logo is `logo-mitek.png` (copy in `public/images/`).
+
+## Tech stack
+
+Installed and in use:
+- Laravel 13.17, PHP ^8.3 (runs on 8.4), MySQL (tests use in-memory SQLite), Pest 5, Pint, Laravel Boost
+- Storefront: Blade + Alpine.js 3 + Tailwind CSS 4 (Vite 8, theme in `resources/css/app.css`, brand colour = logo navy)
+- Admin (`/admin`, `routes/admin.php`): **hand-built Vue 3 + Inertia 3** with Ziggy and Tailwind. Pages in `resources/js/admin/Pages`, shared components in `resources/js/admin/Components`. Admins sign in through the normal storefront login.
+- spatie/laravel-permission (roles `admin`, `customer`), laravel-settings (`App\Settings\*`), laravel-medialibrary, laravel-sitemap, laravel-sluggable, laravel-honeypot, laravel-phone, resend, mpdf/mpdf (invoices)
+
+Deliberately NOT used (decided with the owner; do not install): **Filament, Livewire, barryvdh/laravel-dompdf**.
+Still to build: PDF invoice generation (mPDF), Markdown mail templates, sitemap/JSON-LD, admin DataTable/Modal/FileUpload components.
+Not wired yet: the existing 2FA services (`app/Services/Security`), planned for Phase 6.
+
+## Common commands
+
+- Dev (server + queue + Vite): `composer run dev` · Vite only: `npm run dev` · production assets: `npm run build` (needed if a view change is missing or "Unable to locate file in Vite manifest")
+- Migrate/seed: `php artisan migrate`, `php artisan migrate:fresh --seed` (local seeder creates `admin@mitek.test` / `password`)
+- Tests: `php artisan test --compact` (narrow with a path or `--filter`)
+- Format: `vendor/bin/pint --dirty --format agent` (required after editing PHP)
+- Clear caches: `php artisan optimize:clear`
+
+## Business rules (from Mitek.md)
+
+- **No online card payment.** Methods (enum `PaymentMethod`): bank transfer (Banque Populaire, validation 48–72 h), cash deposit at a branch (~24 h), cash on delivery, certified/bank cheque payable to STE MITEK SARL AU (cashing 8–20 days).
+- **COD only if order total ≤ 2,000 DH TTC** (`PaymentSettings::cod_limit_cents`); enforce at checkout AND when placing the order.
+- Customer uploads proof of payment (transfer, deposit, cheque copy); an admin validates it by hand in the back office.
+- Order status flow (enum `OrderStatus`): `pending_payment` → `payment_submitted` → `paid` → `processing` → `shipped` → `delivered`, plus `cancelled`. Only legal transitions, each written to a status history.
+- Shipping within 2 days of payment validation; admin sets the tracking number. Cost depends on weight and zone/city (configurable rate grid). Customers may use their own carrier (note + possible extra fee).
+- Every order gets a detailed PDF invoice (sequential number, stored once payment is validated). B2B customers have company name, **ICE, IF, RC**, shown on the invoice.
+- Quantity-based B2B price tiers per product, and a quote-request flow (from the cart; admin replies in the back office).
+- IT services are not sold through the cart: each service page has a request form handled in the admin.
+- Money: MAD (DH), VAT 20 % (setting), prices stored **HT as integer centimes**, displayed TTC. Use `App\Support\Money` and `App\Casts\MoneyCast`; never floats.
+
+## Coding conventions
+
+- Thin controllers; validation in Form Requests; business logic in Actions/Services (`PlaceOrder`, `ValidatePayment`, `PriceCalculator`, `ShippingCalculator`, `TransitionOrderStatus`, `GenerateInvoice`...).
+- PHP Enums (`app/Enums`) for statuses, payment methods and roles; Policies for authorization (customers only see their own orders, quotes, addresses).
+- Models live in domain folders (`App\Models\Core\...`, `Security`, `User`); reuse existing traits (`UuidGenerator`, `HasSlug`, `Seoable`, `GetModelByKeyName`).
+- No business value hard-coded in Blade or Vue (phone, bank details, COD limit, VAT, delays): read from `GeneralSettings`, `PaymentSettings`, `ShippingSettings`.
+- Public URLs: slugs for catalog items, reference/signed link for orders (guests get a signed link). Use named routes (`route()`); storefront routes use French slugs.
+- UI is French via `lang/fr` (+ `lang/fr.json`); keep strings in lang files so Arabic/RTL (`lang/ar`, `dir` already switched in the layout) can be added later. Admin Vue strings are currently hard-coded French.
+- Storefront interactivity = Alpine only; admin = Vue/Inertia only. Keep Tailwind v4 conventions (no `tailwind.config.js`, `@theme` in CSS). Add dark-mode variants only if the page supports dark mode (storefront currently does not).
+- Money-affecting and security-sensitive code (checkout, COD rule, payment validation, uploads, policies) always gets Pest tests. Use factories; check for existing states (`User::factory()->admin()`, `->customer()`).
+
+## SEO rules
+
+Clean slugs; unique meta title (`<title>`) and meta description per page; canonical URL on every public page (already in the layout); JSON-LD `Organization`, `Product` (with offers) and `BreadcrumbList` written by hand; `sitemap.xml` (spatie/laravel-sitemap) and `robots.txt`; descriptive `alt` text on every image; the admin is `noindex`.
+
+## Open items / TODO
+
+From `Mitek.md` and the project (placeholders live in settings, empty until the owner supplies them):
+- `[À COMPLÉTER]` phone number; Google Maps embed (placeholder); WhatsApp number
+- Bank RIB/IBAN for STE MITEK SARL AU; Mitek's own ICE/IF/RC/legal mentions for invoices and legal pages
+- Shipping rate grid (zones, cities, weight brackets) and own-carrier extra fee
+- Legal pages text (mentions légales, CGV, confidentialité), return policy, customer-service hours
+- B2B price-tier rules/discounts, real product catalogue beyond the examples in `Mitek.md`, product images
+- Wording for quote requests and service request emails (not covered in `Mitek.md`)
+
+## Workflow rules
+
+1. Plan before coding; build phase by phase (Phase 1 foundations is done; next: 2 catalog, 3 cart/checkout/payment, 4 invoices/emails/customer area/quotes, 5 services/CMS/contact/SEO, 6 tests/performance/security).
+2. At the end of each phase: run migrations and seeders, run `php artisan test`, run Pint, list the files changed, commit (with a message shown to the owner), then stop for review.
+3. Ask before anything hard to undo: schema shape, adding/removing packages, switching away from Vue/Inertia or Alpine.
+4. Follow the Boost guidelines below (activate the matching skills, use `search-docs` for version-specific APIs).
+
 <laravel-boost-guidelines>
 === foundation rules ===
 
