@@ -80,6 +80,30 @@ From `Mitek.md` and the project (placeholders live in settings, empty until the 
 - Admin (/admin): Inertia + Vue only.
 - Storefront interactivity = Alpine + fetch to JSON endpoints, or classic forms with redirect. Pages must stay server-rendered for SEO.
 - 
+## Design skills (mandatory for any UI work)
+
+Installed in `.agents/skills/` and symlinked into `.claude/skills/` (do not edit them, so updates keep working).
+
+- Before creating or modifying any storefront Blade view, Blade component, Tailwind style, or admin Vue page, load and follow:
+  - `better-ui`: exact surface and icon polish (nested border radius = inner radius + padding, optical alignment, layered shadows for depth, `currentColor` icons with stroke matching text weight, image outlines, `hover:` only on hover-capable pointers, `overscroll-behavior: contain` on overlays). **Applies to all UI, storefront and admin.**
+  - `design-taste-frontend`: visual direction (typography, spacing, hero and section composition, copy tone, avoiding the generic AI look). **Applies ONLY to the marketing pages: home, À propos, services overview (`/services`) and Pourquoi Mitek.** Never to the catalogue, product, cart, checkout, account, legal pages or the admin.
+- Apply them within our constraints:
+  - Storefront = Blade + Alpine.js only (never Livewire). Admin = Inertia + Vue only.
+  - Translate any React/JSX/shadcn examples from the skills into Blade components or Vue SFCs.
+  - Pages stay server-rendered, fast, and SEO-friendly; animations only where they add clarity.
+- **Project rules in this file override any installed skill** when they conflict, and the conflict resolutions listed below always win.
+- Known conflicts and how we resolve them:
+  - **Stack:** `design-taste-frontend` builds from its own kit (`starter.html`, `system.css`, `system.js`, copied into `public/assets`). We do not copy the kit: its patterns become Blade components styled with our Tailwind v4 tokens.
+  - **Palette and fonts:** the skill deals palettes and font pairings (`start.mjs deal/css`). Never run them: the Mitek navy palette (`--color-brand-*`) and Instrument Sans are fixed.
+  - **Business facts (its house rule 9):** the skill forbids register/VAT numbers, real phone numbers, postcodes and real contacts. Not applicable here: invoices and legal pages need ICE/IF/RC, and the footer uses the real `contact@mitek.ma`. Facts come from `Mitek.md` and the settings, never invented.
+  - **Copy:** the skill imposes its own voice and `copy-lint`. `Mitek.md` stays the source of truth, in French. Do not rewrite its copy to satisfy a linter; `copy-lint` is advisory on new copy only.
+  - **Images and icons:** the skill fetches stand-in photographs (Wikimedia Commons) and logo icons (jsDelivr) over the network. Do not run `photos.mjs` or `icons.mjs` without asking; product images are Mitek's own or clearly marked placeholders.
+  - **Layout rules** ("one section per screen", hero alone on the first screen, no caption under an image): apply to marketing pages (home, about, services, delivery, payment, FAQ). They do not apply to utility pages (catalogue, product, cart, checkout, account, order, admin), where dense, functional layouts win. A product name and price under a card image is data, not a caption.
+  - **Motion:** the skill mandates its motion layer, a hero entrance and one or two scroll-driven "dealt moments". We allow only CSS hover/focus/press feedback and Alpine state changes, always respecting `prefers-reduced-motion`. No scroll-linked or pinned sections, parallax, shaders or WebGL.
+  - **Finish gate:** the skill's `Stop` hook (it ran `gate.mjs`: headless Chrome, up to 10 minutes, up to 3 fix rounds) is **disabled on purpose**: its `hooks:` block was removed from the frontmatter of `.agents/skills/design-taste-frontend/SKILL.md`, the only place it was registered. Never arm the gate (`gate.mjs --start`, `start.mjs deal`). Our checks are Pest, `npm run build` and Pint. `.taste-skill/` is git-ignored. **Re-check after any `npx skills update`, since updates may re-enable the hook or change `gate.mjs`** (look for a `hooks:` block in that SKILL.md again).
+  - **Missing siblings:** `better-ui` defers typography, accessibility, layout, colour and motion to `better-typography`, `better-accessibility`, `better-layout`, `better-colors` and `better-motion`, which are not installed. Those concerns follow this file and the `tailwindcss-development` skill.
+  - **Cards:** our cards use `ring-1 ring-slate-200` as a border. `better-ui` accepts a consistent project convention, so we keep it and do not convert it to shadows piecemeal.
+
 <laravel-boost-guidelines>
 === foundation rules ===
 
