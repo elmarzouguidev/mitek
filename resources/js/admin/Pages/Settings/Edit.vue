@@ -1,0 +1,136 @@
+<script setup>
+import { Head, useForm } from '@inertiajs/vue3';
+import Button from '../../Components/Button.vue';
+import Card from '../../Components/Card.vue';
+import FormField from '../../Components/FormField.vue';
+import TextInput from '../../Components/TextInput.vue';
+
+const props = defineProps({
+    general: { type: Object, required: true },
+    payment: { type: Object, required: true },
+    shipping: { type: Object, required: true },
+});
+
+const generalForm = useForm({
+    site_name: props.general.site_name,
+    legal_name: props.general.legal_name,
+    email: props.general.email,
+    phone: props.general.phone ?? '',
+    whatsapp: props.general.whatsapp ?? '',
+    address: props.general.address,
+    maps_embed_url: props.general.maps_embed_url ?? '',
+    vat_rate: props.general.vat_rate,
+});
+
+const paymentForm = useForm({
+    bank_name: props.payment.bank_name,
+    account_holder: props.payment.account_holder,
+    rib: props.payment.rib ?? '',
+    cod_limit: props.payment.cod_limit,
+    cheque_payee: props.payment.cheque_payee,
+    bank_transfer_delay: props.payment.bank_transfer_delay,
+    cash_deposit_delay: props.payment.cash_deposit_delay,
+    cheque_delay: props.payment.cheque_delay,
+});
+
+const shippingForm = useForm({
+    dispatch_days: props.shipping.dispatch_days,
+    delivery_estimate: props.shipping.delivery_estimate,
+    own_carrier_fee: props.shipping.own_carrier_fee,
+});
+</script>
+
+<template>
+    <Head title="Paramètres" />
+
+    <h1 class="text-2xl font-semibold tracking-tight">Paramètres</h1>
+
+    <div class="mt-6 max-w-3xl space-y-6">
+        <form @submit.prevent="generalForm.put(route('admin.settings.general'), { preserveScroll: true })">
+            <Card title="Général" description="Coordonnées affichées sur le site et sur les factures.">
+                <div class="grid gap-4 sm:grid-cols-2">
+                    <FormField label="Nom du site" for="site_name" :error="generalForm.errors.site_name">
+                        <TextInput id="site_name" v-model="generalForm.site_name" :invalid="!!generalForm.errors.site_name" />
+                    </FormField>
+                    <FormField label="Raison sociale" for="legal_name" :error="generalForm.errors.legal_name">
+                        <TextInput id="legal_name" v-model="generalForm.legal_name" :invalid="!!generalForm.errors.legal_name" />
+                    </FormField>
+                    <FormField label="Email" for="email" :error="generalForm.errors.email">
+                        <TextInput id="email" type="email" v-model="generalForm.email" :invalid="!!generalForm.errors.email" />
+                    </FormField>
+                    <FormField label="Téléphone" for="phone" :error="generalForm.errors.phone">
+                        <TextInput id="phone" v-model="generalForm.phone" :invalid="!!generalForm.errors.phone" />
+                    </FormField>
+                    <FormField label="WhatsApp" for="whatsapp" hint="Format international, chiffres uniquement (ex. 212600000000)." :error="generalForm.errors.whatsapp">
+                        <TextInput id="whatsapp" v-model="generalForm.whatsapp" :invalid="!!generalForm.errors.whatsapp" />
+                    </FormField>
+                    <FormField label="TVA (%)" for="vat_rate" :error="generalForm.errors.vat_rate">
+                        <TextInput id="vat_rate" type="number" v-model="generalForm.vat_rate" :invalid="!!generalForm.errors.vat_rate" />
+                    </FormField>
+                    <FormField class="sm:col-span-2" label="Adresse" for="address" :error="generalForm.errors.address">
+                        <TextInput id="address" v-model="generalForm.address" :invalid="!!generalForm.errors.address" />
+                    </FormField>
+                    <FormField class="sm:col-span-2" label="Lien d'intégration Google Maps" for="maps_embed_url" :error="generalForm.errors.maps_embed_url">
+                        <TextInput id="maps_embed_url" v-model="generalForm.maps_embed_url" :invalid="!!generalForm.errors.maps_embed_url" />
+                    </FormField>
+                </div>
+                <template #footer>
+                    <Button type="submit" :processing="generalForm.processing">Enregistrer</Button>
+                </template>
+            </Card>
+        </form>
+
+        <form @submit.prevent="paymentForm.put(route('admin.settings.payment'), { preserveScroll: true })">
+            <Card title="Paiement" description="Coordonnées bancaires et règles de paiement.">
+                <div class="grid gap-4 sm:grid-cols-2">
+                    <FormField label="Banque" for="bank_name" :error="paymentForm.errors.bank_name">
+                        <TextInput id="bank_name" v-model="paymentForm.bank_name" :invalid="!!paymentForm.errors.bank_name" />
+                    </FormField>
+                    <FormField label="Titulaire du compte" for="account_holder" :error="paymentForm.errors.account_holder">
+                        <TextInput id="account_holder" v-model="paymentForm.account_holder" :invalid="!!paymentForm.errors.account_holder" />
+                    </FormField>
+                    <FormField label="RIB" for="rib" :error="paymentForm.errors.rib">
+                        <TextInput id="rib" v-model="paymentForm.rib" :invalid="!!paymentForm.errors.rib" />
+                    </FormField>
+                    <FormField label="Plafond paiement à la livraison (DH TTC)" for="cod_limit" :error="paymentForm.errors.cod_limit">
+                        <TextInput id="cod_limit" type="number" v-model="paymentForm.cod_limit" :invalid="!!paymentForm.errors.cod_limit" />
+                    </FormField>
+                    <FormField label="Chèques à l'ordre de" for="cheque_payee" :error="paymentForm.errors.cheque_payee">
+                        <TextInput id="cheque_payee" v-model="paymentForm.cheque_payee" :invalid="!!paymentForm.errors.cheque_payee" />
+                    </FormField>
+                    <FormField label="Délai du virement" for="bank_transfer_delay" :error="paymentForm.errors.bank_transfer_delay">
+                        <TextInput id="bank_transfer_delay" v-model="paymentForm.bank_transfer_delay" :invalid="!!paymentForm.errors.bank_transfer_delay" />
+                    </FormField>
+                    <FormField label="Délai du dépôt en espèces" for="cash_deposit_delay" :error="paymentForm.errors.cash_deposit_delay">
+                        <TextInput id="cash_deposit_delay" v-model="paymentForm.cash_deposit_delay" :invalid="!!paymentForm.errors.cash_deposit_delay" />
+                    </FormField>
+                    <FormField label="Délai d'encaissement du chèque" for="cheque_delay" :error="paymentForm.errors.cheque_delay">
+                        <TextInput id="cheque_delay" v-model="paymentForm.cheque_delay" :invalid="!!paymentForm.errors.cheque_delay" />
+                    </FormField>
+                </div>
+                <template #footer>
+                    <Button type="submit" :processing="paymentForm.processing">Enregistrer</Button>
+                </template>
+            </Card>
+        </form>
+
+        <form @submit.prevent="shippingForm.put(route('admin.settings.shipping'), { preserveScroll: true })">
+            <Card title="Livraison" description="Délais et transporteur personnel. La grille tarifaire par zone et poids arrive en phase 3.">
+                <div class="grid gap-4 sm:grid-cols-2">
+                    <FormField label="Expédition (jours après validation)" for="dispatch_days" :error="shippingForm.errors.dispatch_days">
+                        <TextInput id="dispatch_days" type="number" v-model="shippingForm.dispatch_days" :invalid="!!shippingForm.errors.dispatch_days" />
+                    </FormField>
+                    <FormField label="Supplément transporteur personnel (DH HT)" for="own_carrier_fee" :error="shippingForm.errors.own_carrier_fee">
+                        <TextInput id="own_carrier_fee" type="number" v-model="shippingForm.own_carrier_fee" :invalid="!!shippingForm.errors.own_carrier_fee" />
+                    </FormField>
+                    <FormField class="sm:col-span-2" label="Estimation de livraison" for="delivery_estimate" :error="shippingForm.errors.delivery_estimate">
+                        <TextInput id="delivery_estimate" v-model="shippingForm.delivery_estimate" :invalid="!!shippingForm.errors.delivery_estimate" />
+                    </FormField>
+                </div>
+                <template #footer>
+                    <Button type="submit" :processing="shippingForm.processing">Enregistrer</Button>
+                </template>
+            </Card>
+        </form>
+    </div>
+</template>

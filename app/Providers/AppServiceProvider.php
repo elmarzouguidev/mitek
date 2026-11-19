@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Settings\GeneralSettings;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Schema\Blueprint;
@@ -36,7 +37,6 @@ class AppServiceProvider extends ServiceProvider
         // $this->configureLoadMigrationsFrom();
     }
 
-
     private function addActiveFields(): void
     {
         Blueprint::macro('activeFields', function () {
@@ -44,6 +44,7 @@ class AppServiceProvider extends ServiceProvider
             $this->boolean('is_valid')->default(true);
         });
     }
+
     /**
      * Configure the application's commands.
      */
@@ -62,8 +63,13 @@ class AppServiceProvider extends ServiceProvider
         Date::use(CarbonImmutable::class);
     }
 
-    /** The public site's header and footer (SiteChrome); the 500 page never reads the database. */
-    private function configureViewComposers(): void {}
+    /** The public site's header and footer read the general settings. */
+    private function configureViewComposers(): void
+    {
+        View::composer('components.layouts.app', function ($view): void {
+            $view->with('site', app(GeneralSettings::class));
+        });
+    }
 
     /**
      * Configure the models.
@@ -80,13 +86,13 @@ class AppServiceProvider extends ServiceProvider
      */
     private function configurePasswordValidation(): void
     {
-        Password::defaults(fn() => $this->app?->isProduction() ? Password::min(8)->uncompromised() : null);
+        Password::defaults(fn () => $this->app?->isProduction() ? Password::min(8)->uncompromised() : null);
     }
 
     private function configureLoadMigrationsFrom(): void
     {
         $this->loadMigrationsFrom([
-            database_path() . DIRECTORY_SEPARATOR . 'migrations' . DIRECTORY_SEPARATOR . 'folder_name',
+            database_path().DIRECTORY_SEPARATOR.'migrations'.DIRECTORY_SEPARATOR.'folder_name',
         ]);
 
         /* $migrationsPath = database_path('migrations');

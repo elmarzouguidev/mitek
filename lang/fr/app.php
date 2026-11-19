@@ -1,0 +1,62 @@
+<?php
+
+return [
+    'nav' => [
+        'home' => 'Accueil',
+        'login' => 'Connexion',
+        'register' => 'Créer un compte',
+        'logout' => 'Déconnexion',
+        'account' => 'Mon compte',
+        'admin' => 'Administration',
+    ],
+    'auth' => [
+        'login_title' => 'Connexion',
+        'register_title' => 'Créer un compte',
+        'forgot_title' => 'Mot de passe oublié',
+        'reset_title' => 'Nouveau mot de passe',
+        'email' => 'Adresse email',
+        'name' => 'Nom complet',
+        'password' => 'Mot de passe',
+        'password_confirmation' => 'Confirmer le mot de passe',
+        'remember' => 'Se souvenir de moi',
+        'forgot_link' => 'Mot de passe oublié ?',
+        'submit_login' => 'Se connecter',
+        'submit_register' => 'Créer mon compte',
+        'submit_forgot' => 'Envoyer le lien',
+        'submit_reset' => 'Réinitialiser',
+        'no_account' => 'Pas encore de compte ?',
+        'has_account' => 'Déjà un compte ?',
+    ],
+    'home' => [
+        'title' => 'Fournitures de bureau, équipements et services informatiques',
+        'welcome' => 'Bienvenue sur Mitek.ma, votre partenaire de confiance pour les fournitures de bureau, les équipements et les services informatiques et techniques professionnels au Maroc.',
+        'tagline' => 'Simplifiez votre quotidien professionnel avec Mitek.ma.',
+        'steps' => ['Explorez', 'Commandez', 'Recevez rapidement partout au Maroc'],
+        'products_title' => 'Nos produits',
+        'categories' => [
+            'Consommables & Toners' => 'Cartouches et toners d\'origine HP, Lexmark, Canon, Brother, rubans pour étiqueteuses.',
+            'Équipements informatiques & Accessoires' => 'Switchs réseau PoE, tablettes graphiques, claviers et souris sans fil.',
+            'Matériel de bureau & Papeterie' => 'Étiqueteuses professionnelles, ensembles de bureau, carnets, stylos et surligneurs.',
+            'Mobilier & Organisation du travail' => 'Chaises ergonomiques, bureaux, équipements coworking, rangement et archivage.',
+            'Autres consommables & Hygiène' => 'Agrafes, trombones, rubans adhésifs, produits d\'hygiène et d\'entretien, cartons.',
+        ],
+        'why_title' => 'Pourquoi choisir Mitek.ma ?',
+        'why' => [
+            'Équipe technique certifiée et à l\'écoute',
+            'Produits testés et sélectionnés',
+            'Prix justes et transparents',
+            'Livraison rapide partout au Maroc',
+            'Service client disponible 6j/7',
+        ],
+    ],
+    'footer' => [
+        'rights' => 'Tous droits réservés.',
+        'phone_missing' => 'Téléphone à venir',
+    ],
+    'admin' => [
+        'dashboard' => 'Tableau de bord',
+        'settings' => 'Paramètres',
+        'back_to_site' => 'Voir le site',
+        'saved' => 'Paramètres enregistrés.',
+    ],
+];

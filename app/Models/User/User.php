@@ -4,6 +4,7 @@ namespace App\Models\User;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
+use App\Enums\UserRole;
 use App\Traits\HasTrustedTwoFactorDevices;
 use App\Traits\HasTwoFactorAuthentication;
 use App\Traits\UuidGenerator;
@@ -16,11 +17,16 @@ use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
 #[Fillable(['name', 'email', 'password'])]
-#[Hidden(['password', 'remember_token','two_factor_secret','two_factor_recovery_codes','two_factor_confirmed_at'])]
+#[Hidden(['password', 'remember_token', 'two_factor_secret', 'two_factor_recovery_codes', 'two_factor_confirmed_at'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, HasRoles, UuidGenerator, HasTrustedTwoFactorDevices, HasTwoFactorAuthentication;
+    use HasFactory, HasRoles, HasTrustedTwoFactorDevices, HasTwoFactorAuthentication, Notifiable, UuidGenerator;
+
+    public function isAdmin(): bool
+    {
+        return $this->hasRole(UserRole::Admin->value);
+    }
 
     /**
      * Get the attributes that should be cast.

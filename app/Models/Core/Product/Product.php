@@ -6,19 +6,16 @@ use App\Casts\MoneyCast;
 use App\Traits\GetModelByKeyName;
 use App\Traits\HasSlug;
 use App\Traits\UuidGenerator;
+use Database\Factories\Core\Product\ProductFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-    /** @use HasFactory<\Database\Factories\Core\Product\ProductFactory> */
+    use GetModelByKeyName, HasSlug, UuidGenerator;
+
+    /** @use HasFactory<ProductFactory> */
     use HasFactory;
-
-    use UuidGenerator, GetModelByKeyName, HasSlug;
-
-
-
-
 
     /**
      * Get the attributes that should be cast.
@@ -30,7 +27,7 @@ class Product extends Model
         return [
             'is_active' => 'boolean',
             'is_valid' => 'boolean',
-            'amount' => MoneyCast::class
+            'price_ht' => MoneyCast::class,
         ];
     }
 }

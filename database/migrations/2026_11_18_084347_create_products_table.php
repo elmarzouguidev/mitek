@@ -15,13 +15,13 @@ return new class extends Migration
             $table->id();
             $table->uuid()->unique();
 
-            $table->string('refernce')->nullable();
+            $table->string('reference')->nullable();
             $table->string('name');
             $table->string('slug')->nullable();
             $table->unsignedBigInteger('quantity')->nullable();
             $table->longText('excerpt')->nullable();
             $table->longText('description')->nullable();
-            $table->unsignedBigInteger('amount')->default(0);
+            $table->unsignedBigInteger('price_ht')->default(0);
 
             $table->activeFields();
             $table->timestamps();
