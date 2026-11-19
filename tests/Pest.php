@@ -50,3 +50,49 @@ function something()
 {
     // ..
 }
+
+/*
+|--------------------------------------------------------------------------
+| Shared helpers
+|--------------------------------------------------------------------------
+*/
+
+use App\Models\Core\Product\Product;
+use App\Models\Core\Shipping\ShippingZone;
+
+/**
+ * Makes shipping available: a default zone with a single flat rate (in dirhams HT).
+ */
+function enableShipping(string|int|float $price = 30): ShippingZone
+{
+    return ShippingZone::factory()->default()->flatRate($price)->create(['name' => 'Default zone']);
+}
+
+/**
+ * Session content of a cart: [product => quantity].
+ *
+ * @param  array<int, array{0: Product, 1: int}>  $lines
+ * @return array{cart: array<int, int>}
+ */
+function cartSession(array $lines): array
+{
+    return ['cart' => collect($lines)->mapWithKeys(fn (array $line): array => [$line[0]->id => $line[1]])->all()];
+}
+
+/**
+ * @param  array<string, mixed>  $overrides
+ * @return array<string, mixed>
+ */
+function checkoutPayload(array $overrides = []): array
+{
+    return array_merge([
+        'contact_name' => 'Sara Benali',
+        'contact_email' => 'sara@example.com',
+        'contact_phone' => '0612345678',
+        'is_company' => false,
+        'shipping_city' => 'Casablanca',
+        'shipping_address' => '12 rue des Fleurs',
+        'carrier_mode' => 'mitek',
+        'payment_method' => 'bank_transfer',
+    ], $overrides);
+}

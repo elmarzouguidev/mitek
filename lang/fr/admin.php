@@ -20,4 +20,14 @@ return [
         'updated' => 'Marque enregistrée.',
         'deleted' => 'Marque supprimée.',
     ],
+    'orders' => [
+        'status_updated' => 'Statut de la commande mis à jour.',
+        'payment_validated' => 'Paiement validé : la commande est payée.',
+        'payment_rejected' => 'Justificatif refusé : le client peut en envoyer un autre.',
+        'proof_added' => 'Justificatif ajouté à la commande.',
+    ],
+    'shipping' => [
+        'saved' => 'Zone de livraison enregistrée.',
+        'deleted' => 'Zone de livraison supprimée.',
+    ],
 ];

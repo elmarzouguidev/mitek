@@ -67,14 +67,15 @@
 
                 <div class="mt-4"><x-stock-badge :product="$product" /></div>
 
-                <div class="mt-6 flex flex-wrap items-end gap-3">
+                <form method="POST" action="{{ route('cart.store') }}" class="mt-6 flex flex-wrap items-end gap-3">
+                    @csrf
+                    <input type="hidden" name="product" value="{{ $product->slug }}">
                     <div>
                         <label for="quantity" class="block text-sm font-medium text-slate-700">{{ __('catalog.product.quantity') }}</label>
-                        <input id="quantity" type="number" min="1" max="100000" x-model.number="quantity" @input="update()" class="mt-1 w-24 rounded-lg border-0 px-3 py-2 text-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-brand-600">
+                        <input id="quantity" name="quantite" type="number" min="1" max="{{ max(1, $product->stock_quantity) }}" value="1" x-model.number="quantity" @input="update()" @disabled(! $product->isInStock()) class="mt-1 w-24 rounded-lg border-0 px-3 py-2 text-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-brand-600">
                     </div>
-                    <button type="button" @disabled(! $product->isInStock()) @click="cartNotice = true" class="rounded-lg bg-brand-700 px-6 py-2.5 text-sm font-semibold text-white hover:bg-brand-800 disabled:cursor-not-allowed disabled:opacity-50">{{ __('catalog.product.add_to_cart') }}</button>
-                </div>
-                <p x-cloak x-show="cartNotice" class="mt-3 text-sm text-slate-600" role="status">{{ __('catalog.product.cart_soon') }}</p>
+                    <button type="submit" @disabled(! $product->isInStock()) class="rounded-lg bg-brand-700 px-6 py-2.5 text-sm font-semibold text-white hover:bg-brand-800 disabled:cursor-not-allowed disabled:opacity-50">{{ __('catalog.product.add_to_cart') }}</button>
+                </form>
 
                 @if ($tierTable !== [])
                     <section class="mt-8" aria-labelledby="tiers-title">

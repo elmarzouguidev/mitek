@@ -1,0 +1,40 @@
+<?php
+
+namespace App\Models\Core\Order;
+
+use App\Enums\OrderStatus;
+use App\Models\User\User;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class OrderStatusHistory extends Model
+{
+    public const UPDATED_AT = null;
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function casts(): array
+    {
+        return [
+            'from_status' => OrderStatus::class,
+            'to_status' => OrderStatus::class,
+        ];
+    }
+
+    /**
+     * @return BelongsTo<Order, $this>
+     */
+    public function order(): BelongsTo
+    {
+        return $this->belongsTo(Order::class);
+    }
+
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+}

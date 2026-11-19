@@ -115,6 +115,9 @@ return [
     'custom' => [
         'tier_price' => 'Le prix du palier ne peut pas dépasser le prix de base.',
         'too_many_images' => 'Un produit ne peut pas avoir plus de :max images.',
+        'city_duplicate' => 'La ville « :city » est en double dans cette zone.',
+        'city_taken' => 'La ville « :city » appartient déjà à une autre zone.',
+        'rate_overlap' => 'Cette tranche de poids chevauche une autre tranche.',
         'category_own_parent' => 'Une catégorie ne peut pas être son propre parent.',
         'category_has_children' => 'Cette catégorie a des sous-catégories : elle ne peut pas devenir une sous-catégorie.',
     ],

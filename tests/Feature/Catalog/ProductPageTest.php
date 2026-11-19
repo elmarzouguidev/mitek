@@ -62,8 +62,8 @@ it('shows the stock status and disables the cart button when sold out', function
     $available = Product::factory()->create(['stock_quantity' => 30]);
     $soldOut = Product::factory()->outOfStock()->create();
 
-    $this->get(route('products.show', $available->slug))->assertSee('En stock')->assertDontSee('type="button" disabled', false);
-    $this->get(route('products.show', $soldOut->slug))->assertSee('Rupture de stock')->assertSee('type="button" disabled', false);
+    $this->get(route('products.show', $available->slug))->assertSee('En stock')->assertDontSee('type="submit" disabled', false);
+    $this->get(route('products.show', $soldOut->slug))->assertSee('Rupture de stock')->assertSee('type="submit" disabled', false);
 });
 
 it('suggests related products from the same category, never the product itself', function () {

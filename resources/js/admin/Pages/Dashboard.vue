@@ -14,9 +14,16 @@ defineProps({
 <template>
     <Head title="Tableau de bord" />
 
-    <PageHeader title="Tableau de bord" subtitle="Les indicateurs de ventes arriveront avec les commandes (phase 3)." />
+    <PageHeader title="Tableau de bord" subtitle="Commandes payées, en préparation, expédiées ou livrées sur les 30 derniers jours." />
 
     <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <Link :href="route('admin.orders.index', { status: 'payment_submitted' })" class="block rounded-xl bg-white p-5 shadow-xs ring-1 ring-slate-200 hover:ring-brand-300">
+            <p class="text-sm font-medium text-slate-500">Paiements à valider</p>
+            <p :class="stats.awaiting_validation ? 'text-brand-700' : 'text-slate-900'" class="mt-2 text-3xl font-semibold tracking-tight">{{ stats.awaiting_validation }}</p>
+            <p class="mt-1 text-xs text-slate-500">justificatifs reçus, en attente</p>
+        </Link>
+        <StatCard label="Commandes à traiter" :value="stats.to_process" />
+        <StatCard label="Chiffre d'affaires (30 jours)" :value="stats.revenue_30_days" />
         <StatCard label="Clients" :value="stats.customers" />
         <StatCard label="Produits" :value="stats.products" />
         <Link :href="route('admin.products.index', { stock: 'low' })" class="block rounded-xl bg-white p-5 shadow-xs ring-1 ring-slate-200 hover:ring-brand-300">

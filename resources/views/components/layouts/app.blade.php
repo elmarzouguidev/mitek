@@ -29,6 +29,12 @@
 
             <nav class="hidden items-center gap-6 text-sm font-medium md:flex" aria-label="Navigation principale">
                 <a href="{{ route('home') }}" class="text-slate-700 hover:text-brand-700">{{ __('app.nav.home') }}</a>
+                <a href="{{ route('cart.show') }}" class="relative text-slate-700 hover:text-brand-700">
+                    {{ __('orders.cart.title') }}
+                    @if ($cartCount > 0)
+                        <span class="ml-1 inline-flex min-w-5 items-center justify-center rounded-full bg-brand-700 px-1.5 text-xs font-semibold text-white">{{ $cartCount }}</span>
+                    @endif
+                </a>
                 @auth
                     @if (auth()->user()->isAdmin())
                         <a href="{{ route('admin.dashboard') }}" class="text-slate-700 hover:text-brand-700">{{ __('app.nav.admin') }}</a>
@@ -75,6 +81,7 @@
 
         <nav x-cloak x-show="open" class="space-y-1 border-t border-slate-200 px-4 py-3 text-sm font-medium md:hidden" aria-label="Navigation mobile">
             <a href="{{ route('home') }}" class="block rounded-lg px-3 py-2 hover:bg-slate-100">{{ __('app.nav.home') }}</a>
+            <a href="{{ route('cart.show') }}" class="block rounded-lg px-3 py-2 hover:bg-slate-100">{{ __('orders.cart.title') }}@if ($cartCount > 0) ({{ $cartCount }})@endif</a>
             @foreach ($menu as $root)
                 <a href="{{ route('categories.show', $root['slug']) }}" class="block rounded-lg px-3 py-2 hover:bg-slate-100">{{ $root['name'] }}</a>
             @endforeach
@@ -94,6 +101,22 @@
     </header>
 
     <main class="flex-1">
+        @if (session('success') || session('error') || $errors->hasAny(['cart', 'quantite', 'payment']))
+            <div class="mx-auto max-w-7xl px-4 pt-6 sm:px-6 lg:px-8" role="status">
+                @if (session('success'))
+                    <p class="rounded-lg bg-emerald-50 px-4 py-3 text-sm text-emerald-800 ring-1 ring-emerald-200">{{ session('success') }}</p>
+                @endif
+                @if (session('error'))
+                    <p class="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-800 ring-1 ring-red-200">{{ session('error') }}</p>
+                @endif
+                @foreach (['cart', 'quantite', 'payment'] as $key)
+                    @error($key)
+                        <p class="mt-2 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-800 ring-1 ring-red-200">{{ $message }}</p>
+                    @enderror
+                @endforeach
+            </div>
+        @endif
+
         {{ $slot }}
     </main>
 

@@ -13,7 +13,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call([RoleSeeder::class, ProductSeeder::class]);
+        $this->call([RoleSeeder::class, ShippingZoneSeeder::class, ProductSeeder::class]);
 
         if (app()->environment('local')) {
             User::factory()->create([

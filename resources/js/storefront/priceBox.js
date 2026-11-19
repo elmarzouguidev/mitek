@@ -9,7 +9,6 @@ export default (url, initial) => ({
     quantity: 1,
     quote: initial,
     loading: false,
-    cartNotice: false,
     timer: null,
     controller: null,
 

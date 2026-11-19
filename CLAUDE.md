@@ -30,8 +30,9 @@ Not wired yet: the existing 2FA services (`app/Services/Security`), planned for 
 - **No online card payment.** Methods (enum `PaymentMethod`): bank transfer (Banque Populaire, validation 48–72 h), cash deposit at a branch (~24 h), cash on delivery, certified/bank cheque payable to STE MITEK SARL AU (cashing 8–20 days).
 - **COD only if order total ≤ 2,000 DH TTC** (`PaymentSettings::cod_limit_cents`); enforce at checkout AND when placing the order.
 - Customer uploads proof of payment (transfer, deposit, cheque copy); an admin validates it by hand in the back office.
-- Order status flow (enum `OrderStatus`): `pending_payment` → `payment_submitted` → `paid` → `processing` → `shipped` → `delivered`, plus `cancelled`. Only legal transitions, each written to a status history.
-- Shipping within 2 days of payment validation; admin sets the tracking number. Cost depends on weight and zone/city (configurable rate grid). Customers may use their own carrier (note + possible extra fee).
+- Order status flow (enum `OrderStatus`): `pending_payment` → `payment_submitted` → `paid` → `processing` → `shipped` → `delivered`, plus `cancelled`. Only legal transitions, each written to a status history, always through `TransitionOrderStatus`. Cash on delivery skips the payment steps (admin confirms: `pending_payment` → `processing`; the cash is recorded at `delivered`). A rejected proof sends the order back to `pending_payment`. Cancelling (before shipping) restocks. Stock is reserved when the order is placed.
+- Orders are reached through a signed link (guests) or ownership (`OrderPolicy`), never by id. Proofs of payment live on the private `local` disk and are only streamed to admins.
+- Shipping within 2 days of payment validation; admin sets the tracking number (required unless the customer uses their own carrier). Cost = zone of the typed city (unmapped cities use the default zone) + weight bracket, from the admin "Livraison" screen (`ShippingCalculator`). Own carrier = note + `ShippingSettings::own_carrier_fee_cents`.
 - Every order gets a detailed PDF invoice (sequential number, stored once payment is validated). B2B customers have company name, **ICE, IF, RC**, shown on the invoice.
 - Quantity-based B2B price tiers per product, and a quote-request flow (from the cart; admin replies in the back office).
 - IT services are not sold through the cart: each service page has a request form handled in the admin.
@@ -58,14 +59,15 @@ Clean slugs; unique meta title (`<title>`) and meta description per page; canoni
 From `Mitek.md` and the project (placeholders live in settings, empty until the owner supplies them):
 - `[À COMPLÉTER]` phone number; Google Maps embed (placeholder); WhatsApp number
 - Bank RIB/IBAN for STE MITEK SARL AU; Mitek's own ICE/IF/RC/legal mentions for invoices and legal pages
-- Shipping rate grid (zones, cities, weight brackets) and own-carrier extra fee
+- Shipping rate grid: the seeded zones, cities and prices are DEMO values; the real grid and own-carrier fee are still needed
+- Seeded catalogue prices/specs are DEMO values too
 - Legal pages text (mentions légales, CGV, confidentialité), return policy, customer-service hours
 - B2B price-tier rules/discounts, real product catalogue beyond the examples in `Mitek.md`, product images
 - Wording for quote requests and service request emails (not covered in `Mitek.md`)
 
 ## Workflow rules
 
-1. Plan before coding; build phase by phase (Phases 1 foundations and 2 catalog are done; next: 3 cart/checkout/payment, 4 invoices/emails/customer area/quotes, 5 services/CMS/contact/SEO, 6 tests/performance/security).
+1. Plan before coding; build phase by phase (Phases 1 foundations, 2 catalog and 3 cart/checkout/payment are done; next: 4 invoices/emails/customer area/quotes, 5 services/CMS/contact/SEO, 6 tests/performance/security).
 2. At the end of each phase: run migrations and seeders, run `php artisan test`, run Pint, list the files changed, commit (with a message shown to the owner), then stop for review.
 3. Ask before anything hard to undo: schema shape, adding/removing packages, switching away from Vue/Inertia or Alpine.
 4. Follow the Boost guidelines below (activate the matching skills, use `search-docs` for version-specific APIs).

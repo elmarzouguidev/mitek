@@ -115,7 +115,7 @@ const shippingForm = useForm({
         </form>
 
         <form @submit.prevent="shippingForm.put(route('admin.settings.shipping'), { preserveScroll: true })">
-            <Card title="Livraison" description="Délais et transporteur personnel. La grille tarifaire par zone et poids arrive en phase 3.">
+            <Card title="Livraison" description="Délais et transporteur personnel. Les tarifs par zone et par poids se règlent dans « Livraison ».">
                 <div class="grid gap-4 sm:grid-cols-2">
                     <FormField label="Expédition (jours après validation)" for="dispatch_days" :error="shippingForm.errors.dispatch_days">
                         <TextInput id="dispatch_days" type="number" v-model="shippingForm.dispatch_days" :invalid="!!shippingForm.errors.dispatch_days" />
