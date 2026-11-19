@@ -26,6 +26,15 @@ return [
         'copy_email' => 'Copier l\'adresse email',
         'copied' => 'Adresse copiée',
     ],
+    'whatsapp' => [
+        'chat' => 'Discuter sur WhatsApp',
+        'hours' => 'Horaires : :hours',
+        'order' => 'Commander par WhatsApp',
+        'order_product' => 'Commander sur WhatsApp',
+        'product_message' => "Bonjour, je souhaite commander :\n:name (Réf. :reference)\nPrix : :price TTC\n:url",
+        'quantity_line' => 'Quantité : :quantity',
+        'new_tab' => '(ouvre WhatsApp dans un nouvel onglet)',
+    ],
     'announcement' => [
         'close' => 'Fermer l\'annonce',
     ],

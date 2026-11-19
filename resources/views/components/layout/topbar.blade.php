@@ -1,12 +1,12 @@
 @props(['site'])
 
-@php($whatsappUrl = $site->whatsapp ? 'https://wa.me/'.$site->whatsapp : null)
+@php($whatsappUrl = whatsapp_url())
 
 <div class="bg-brand-950 text-xs text-brand-100" x-data="copyText(@js($site->email))">
     <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-2 sm:px-6 lg:px-8">
         <div class="flex items-center gap-4">
             @if ($whatsappUrl)
-                <a href="{{ $whatsappUrl }}" target="_blank" rel="noopener" class="font-medium hover:text-white">WhatsApp</a>
+                <a href="{{ $whatsappUrl }}" target="_blank" rel="noopener noreferrer" class="font-medium hover:text-white">WhatsApp</a>
             @endif
             <span class="hidden items-center gap-1 sm:flex">
                 <a href="mailto:{{ $site->email }}" class="hover:text-white">{{ $site->email }}</a>

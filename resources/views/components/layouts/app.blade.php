@@ -2,7 +2,6 @@
 
 @php
     $pageTitle = $title ? $title.' · '.$site->site_name : $site->site_name.' · '.__('app.home.title');
-    $whatsappUrl = $site->whatsapp ? 'https://wa.me/'.$site->whatsapp : null;
     $metaDescription = \App\Support\Seo::limit($description ?: __('app.home.welcome'));
     $canonicalUrl = $canonical ?: url()->current();
     $shareImage = $image ?: asset('images/share-default.png');
@@ -112,8 +111,6 @@
         </div>
     </footer>
 
-    @if ($whatsappUrl)
-        <a href="{{ $whatsappUrl }}" target="_blank" rel="noopener" aria-label="WhatsApp" class="fixed bottom-5 right-5 z-40 rounded-full bg-emerald-500 px-4 py-3 text-sm font-semibold text-white shadow-lg hover:bg-emerald-600">WhatsApp</a>
-    @endif
+    <x-layout.whatsapp-button :site="$site" />
 </body>
 </html>

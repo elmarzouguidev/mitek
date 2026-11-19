@@ -1,6 +1,6 @@
 @props(['menu', 'site'])
 
-@php($whatsappUrl = $site->whatsapp ? 'https://wa.me/'.$site->whatsapp : null)
+@php($whatsappUrl = whatsapp_url())
 
 <nav class="hidden border-b border-slate-200 bg-white lg:block" aria-label="{{ __('app.nav.main') }}">
     <div class="relative mx-auto flex max-w-7xl items-center gap-1 px-4 sm:px-6 lg:px-8" x-data="megaMenu()" @keydown.escape.window="open && close(true)" @click.outside="close()" @focusout="focusOut($event)" @pointerenter="hoverIn($event)" @pointerleave="hoverOut($event)">
@@ -29,7 +29,7 @@
                 <a href="{{ route('quotes.standalone') }}" class="rounded-lg bg-brand-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-800 active:scale-[0.98]">{{ __('app.nav.quote') }}</a>
             @endif
             @if ($whatsappUrl)
-                <a href="{{ $whatsappUrl }}" target="_blank" rel="noopener" class="rounded-lg p-2 text-emerald-600 hover:bg-emerald-50" aria-label="WhatsApp">
+                <a href="{{ $whatsappUrl }}" target="_blank" rel="noopener noreferrer" class="rounded-lg p-2 text-emerald-600 hover:bg-emerald-50" aria-label="WhatsApp">
                     <svg class="size-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2a9.9 9.9 0 0 0-8.4 15.1L2 22l5.05-1.6A9.9 9.9 0 1 0 12.04 2Zm0 18.1a8.2 8.2 0 0 1-4.2-1.15l-.3-.18-3 .95.97-2.9-.2-.3a8.2 8.2 0 1 1 6.73 3.58Zm4.5-6.1c-.25-.12-1.45-.72-1.68-.8-.22-.08-.39-.12-.55.12s-.63.8-.77.96-.28.18-.52.06a6.7 6.7 0 0 1-3.3-2.9c-.25-.43.25-.4.72-1.33.08-.16.04-.3-.02-.42s-.55-1.32-.75-1.8c-.2-.47-.4-.4-.55-.41h-.47c-.16 0-.42.06-.64.3s-.84.82-.84 2 .86 2.32.98 2.48c.12.16 1.7 2.6 4.1 3.65 1.5.65 2.1.7 2.86.6.46-.07 1.45-.6 1.65-1.17s.2-1.07.14-1.17-.22-.16-.47-.28Z"/></svg>
                 </a>
             @endif

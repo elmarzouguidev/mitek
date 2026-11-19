@@ -1,6 +1,6 @@
 @props(['menu', 'site', 'cartCount'])
 
-@php($whatsappUrl = $site->whatsapp ? 'https://wa.me/'.$site->whatsapp : null)
+@php($whatsappUrl = whatsapp_url())
 
 <div id="mobile-drawer" x-cloak x-show="drawerOpen" role="dialog" aria-modal="true" aria-label="{{ __('app.nav.menu') }}" class="fixed inset-0 z-50 overflow-y-auto overscroll-contain bg-white lg:hidden" @keydown.escape.window="closeDrawer()">
     <div class="flex items-center justify-between border-b border-slate-200 px-4 py-3">
@@ -64,7 +64,7 @@
             <a href="{{ route('quotes.standalone') }}" class="mt-4 block rounded-lg bg-brand-700 px-5 py-3 text-center text-sm font-semibold text-white">{{ __('app.nav.quote') }}</a>
         @endif
         @if ($whatsappUrl)
-            <a href="{{ $whatsappUrl }}" target="_blank" rel="noopener" class="mt-3 block rounded-lg px-5 py-3 text-center text-sm font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-200">WhatsApp</a>
+            <a href="{{ $whatsappUrl }}" target="_blank" rel="noopener noreferrer" class="mt-3 block rounded-lg px-5 py-3 text-center text-sm font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-200">WhatsApp</a>
         @endif
         <p class="mt-6 text-center text-xs text-slate-500">{{ $site->email }}</p>
     </nav>
