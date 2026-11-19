@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Enums\OrderStatus;
+use App\Events\CallbackRequested;
 use App\Events\ContactMessageReceived;
 use App\Events\OrderPlaced;
 use App\Events\OrderStatusChanged;
@@ -105,6 +106,23 @@ class NotifyAdmin implements ShouldQueue
             ],
             route('admin.messages.show', $message),
             'Lire le message',
+        ));
+    }
+
+    public function handleCallbackRequested(CallbackRequested $event): void
+    {
+        $callback = $event->callback;
+
+        $this->send(new AdminNotificationMail(
+            __('Demande de rappel : :name', ['name' => $callback->name]),
+            array_filter([
+                'Téléphone : '.$callback->phone,
+                'Sujet : '.$callback->subject->label(),
+                'Créneau : '.$callback->time_slot->label(),
+                $callback->note ? 'Précisions : '.Str::limit($callback->note, 200) : null,
+            ]),
+            route('admin.callbacks.show', $callback),
+            'Traiter la demande',
         ));
     }
 

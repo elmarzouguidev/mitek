@@ -12,6 +12,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Storefront\CallbackController;
 use App\Http\Controllers\Storefront\CartController;
 use App\Http\Controllers\Storefront\CategoryController;
 use App\Http\Controllers\Storefront\CheckoutController;
@@ -43,6 +44,8 @@ foreach (PageKey::cases() as $pageKey) {
 }
 
 Route::get('faq', [FaqController::class, 'index'])->name('faq');
+Route::get('rappel', [CallbackController::class, 'create'])->name('callback.create');
+Route::post('rappel', [CallbackController::class, 'store'])->middleware([ProtectAgainstSpam::class, 'throttle:5,1'])->name('callback.store');
 Route::get('contact', [ContactController::class, 'show'])->name('contact');
 Route::post('contact', [ContactController::class, 'store'])->middleware([ProtectAgainstSpam::class, 'throttle:10,1'])->name('contact.store');
 

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\BrandController;
+use App\Http\Controllers\Admin\CallbackRequestController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ContactMessageController;
 use App\Http\Controllers\Admin\DashboardController;
@@ -77,6 +78,9 @@ Route::get('faq/questions/{item}/modifier', [FaqController::class, 'editItem'])-
 Route::put('faq/questions/{item}', [FaqController::class, 'updateItem'])->name('faq.items.update');
 Route::delete('faq/questions/{item}', [FaqController::class, 'destroyItem'])->name('faq.items.destroy');
 
+Route::get('rappels', [CallbackRequestController::class, 'index'])->name('callbacks.index');
+Route::get('rappels/{callback}', [CallbackRequestController::class, 'show'])->name('callbacks.show');
+Route::put('rappels/{callback}', [CallbackRequestController::class, 'update'])->name('callbacks.update');
 Route::get('messages', [ContactMessageController::class, 'index'])->name('messages.index');
 Route::get('messages/{message}', [ContactMessageController::class, 'show'])->name('messages.show');
 Route::put('messages/{message}/non-lu', [ContactMessageController::class, 'markUnread'])->name('messages.unread');

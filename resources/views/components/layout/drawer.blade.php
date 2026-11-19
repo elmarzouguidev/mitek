@@ -40,7 +40,7 @@
             @endif
             <li><a href="{{ route('contact') }}" class="block py-3 text-base font-medium text-slate-900">{{ __('app.nav.contact') }}</a></li>
             @if (nav_feature('callback'))
-                <li><a href="{{ route('callback.create') }}" class="block py-3 text-base font-medium text-slate-900">{{ __('app.topbar.callback') }}</a></li>
+                <li><a href="{{ route('callback.create') }}" @unless (request()->routeIs('callback.*')) aria-haspopup="dialog" @click="if (! ($event.ctrlKey || $event.metaKey || $event.shiftKey || $event.button !== 0)) { $event.preventDefault(); closeDrawer(false); $dispatch('callback:open'); }" @endunless class="block py-3 text-base font-medium text-slate-900">{{ __('app.topbar.callback') }}</a></li>
             @endif
             <li><a href="{{ route('cart.show') }}" class="block py-3 text-base font-medium text-slate-900">{{ __('orders.cart.title') }}@if ($cartCount > 0) ({{ $cartCount }})@endif</a></li>
             @auth

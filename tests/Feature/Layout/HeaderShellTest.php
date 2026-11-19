@@ -18,12 +18,11 @@ function announce(array $values): void
 }
 
 it('hides links to features whose route does not exist yet', function () {
-    expect(nav_feature('pro'))->toBeFalse()->and(nav_feature('quote'))->toBeFalse()->and(nav_feature('callback'))->toBeFalse();
+    expect(nav_feature('pro'))->toBeFalse()->and(nav_feature('quote'))->toBeFalse()->and(nav_feature('callback'))->toBeTrue();
 
     $this->get(route('home'))
         ->assertOk()
-        ->assertDontSee('Espace pro')
-        ->assertDontSee('Être rappelé');
+        ->assertDontSee('Espace pro');
 });
 
 it('shows a feature link as soon as its route exists', function () {

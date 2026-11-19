@@ -46,6 +46,9 @@
     <x-layout.nav :menu="$menu" :site="$site" />
     <x-layout.drawer :menu="$menu" :site="$site" :cart-count="$cartCount" />
     <x-layout.cart-drawer :menu="$menu" :cart-count="$cartCount" />
+    @if (nav_feature('callback'))
+        <x-layout.callback-modal />
+    @endif
 
     <main class="flex-1">
         @if (session('success') || session('error') || $errors->hasAny(['cart', 'quantite', 'payment']))

@@ -32,6 +32,11 @@ defineProps({
             <p :class="stats.new_service_requests ? 'text-brand-700' : 'text-slate-900'" class="mt-2 text-3xl font-semibold tracking-tight">{{ stats.new_service_requests }}</p>
             <p class="mt-1 text-xs text-slate-500">nouvelles, à traiter</p>
         </Link>
+        <Link :href="route('admin.callbacks.index', { status: 'new' })" class="block rounded-xl bg-white p-5 shadow-xs ring-1 ring-slate-200 hover:ring-brand-300">
+            <p class="text-sm font-medium text-slate-500">Demandes de rappel</p>
+            <p :class="stats.new_callbacks ? 'text-brand-700' : 'text-slate-900'" class="mt-2 text-3xl font-semibold tracking-tight">{{ stats.new_callbacks }}</p>
+            <p class="mt-1 text-xs text-slate-500">à rappeler</p>
+        </Link>
         <Link :href="route('admin.messages.index', { status: 'unread' })" class="block rounded-xl bg-white p-5 shadow-xs ring-1 ring-slate-200 hover:ring-brand-300">
             <p class="text-sm font-medium text-slate-500">Messages non lus</p>
             <p :class="stats.unread_messages ? 'text-brand-700' : 'text-slate-900'" class="mt-2 text-3xl font-semibold tracking-tight">{{ stats.unread_messages }}</p>

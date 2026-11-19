@@ -20,7 +20,7 @@
         <nav class="flex items-center gap-4" aria-label="{{ __('app.topbar.label') }}">
             <a href="{{ route('contact') }}" class="hover:text-white">{{ __('app.topbar.contact') }}</a>
             @if (nav_feature('callback'))
-                <a href="{{ route('callback.create') }}" class="hover:text-white">{{ __('app.topbar.callback') }}</a>
+                <a href="{{ route('callback.create') }}" @unless (request()->routeIs('callback.*')) aria-haspopup="dialog" @click="if (! ($event.ctrlKey || $event.metaKey || $event.shiftKey || $event.button !== 0)) { $event.preventDefault(); $dispatch('callback:open'); }" @endunless class="hover:text-white">{{ __('app.topbar.callback') }}</a>
             @endif
         </nav>
     </div>

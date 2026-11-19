@@ -1,5 +1,6 @@
 import Alpine from 'alpinejs';
 import announcement from './storefront/announcement';
+import callbackModal from './storefront/callbackModal';
 import cartDrawer from './storefront/cartDrawer';
 import checkout from './storefront/checkout';
 import copyText from './storefront/copyText';
@@ -10,6 +11,7 @@ import searchBox from './storefront/searchBox';
 import siteShell from './storefront/siteShell';
 
 Alpine.data('announcement', announcement);
+Alpine.data('callbackModal', callbackModal);
 Alpine.data('cartDrawer', cartDrawer);
 Alpine.data('checkout', checkout);
 Alpine.data('copyText', copyText);

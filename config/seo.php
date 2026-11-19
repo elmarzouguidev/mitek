@@ -16,6 +16,7 @@ return [
         '/panier',
         '/commande',
         '/devis',
+        '/rappel',
         '/recherche',
         '/connexion',
         '/inscription',

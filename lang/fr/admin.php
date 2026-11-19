@@ -32,6 +32,7 @@ return [
     ],
     'services' => ['saved' => 'Service enregistré.', 'deleted' => 'Service supprimé.'],
     'service_requests' => ['updated' => 'Demande mise à jour.'],
+    'callbacks' => ['updated' => 'Demande de rappel mise à jour.'],
     'pages' => ['saved' => 'Page enregistrée.'],
     'faq' => ['saved' => 'FAQ enregistrée.', 'deleted' => 'Élément supprimé.'],
     'messages' => ['unread' => 'Message marqué comme non lu.', 'deleted' => 'Message supprimé.'],

@@ -10,6 +10,7 @@ const navigation = [
     { name: 'Tableau de bord', route: 'admin.dashboard', match: 'admin.dashboard' },
     { name: 'Commandes', route: 'admin.orders.index', match: 'admin.orders.*' },
     { name: 'Demandes de service', route: 'admin.service-requests.index', match: 'admin.service-requests.*' },
+    { name: 'Rappels', route: 'admin.callbacks.index', match: 'admin.callbacks.*' },
     { name: 'Messages', route: 'admin.messages.index', match: 'admin.messages.*' },
     { name: 'Devis', route: 'admin.quotes.index', match: 'admin.quotes.*' },
     { name: 'Produits', route: 'admin.products.index', match: 'admin.products.*' },
