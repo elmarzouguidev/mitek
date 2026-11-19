@@ -3,7 +3,7 @@
 @php($whatsappUrl = $site->whatsapp ? 'https://wa.me/'.$site->whatsapp : null)
 
 <nav class="hidden border-b border-slate-200 bg-white lg:block" aria-label="{{ __('app.nav.main') }}">
-    <div class="relative mx-auto flex max-w-7xl items-center gap-1 px-4 sm:px-6 lg:px-8" x-data="megaMenu()" @keydown.escape="close(true)" @click.outside="close()" @focusout="focusOut($event)" @pointerenter="hoverIn($event)" @pointerleave="hoverOut($event)">
+    <div class="relative mx-auto flex max-w-7xl items-center gap-1 px-4 sm:px-6 lg:px-8" x-data="megaMenu()" @keydown.escape.window="open && close(true)" @click.outside="close()" @focusout="focusOut($event)" @pointerenter="hoverIn($event)" @pointerleave="hoverOut($event)">
         @if ($menu !== [])
             <button type="button" x-ref="trigger" @click="toggle()" class="flex items-center gap-2 rounded-lg bg-brand-50 px-4 py-2.5 text-sm font-semibold text-brand-800 hover:bg-brand-100" aria-controls="mega-menu" :aria-expanded="open ? 'true' : 'false'">
                 <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16"/></svg>

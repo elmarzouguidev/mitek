@@ -29,7 +29,7 @@
             @keydown.up.prevent="move(-1)"
             @keydown.enter="choose($event)"
             @keydown.tab="close()"
-            class="block w-full rounded-lg border-0 bg-white px-4 py-2 text-sm shadow-xs ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-brand-600"
+            class="block w-full text-ellipsis rounded-lg border-0 bg-white px-4 py-2 text-sm shadow-xs ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-brand-600"
         >
         <button type="submit" class="shrink-0 rounded-lg bg-brand-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-800 active:scale-[0.98]">{{ __('catalog.search.button') }}</button>
     </div>
@@ -58,7 +58,7 @@
                 </li>
             </template>
             <li x-show="!groups.length" class="px-3 py-3 text-sm text-slate-500" x-text="labels.none"></li>
-            <li role="option" :id="'sb-opt-' + lastIndex" :aria-selected="active === lastIndex ? 'true' : 'false'" class="border-t border-slate-100" @mouseenter="active = lastIndex">
+            <li role="option" :id="'sb-opt-' + lastIndex" :aria-selected="active === lastIndex ? 'true' : 'false'" class="sticky bottom-0 -mb-1 border-t border-slate-100 bg-white" @mouseenter="active = lastIndex">
                 <a :href="allUrl" tabindex="-1" class="block px-3 py-2.5 text-sm font-medium text-brand-700" :class="active === lastIndex ? 'bg-brand-50' : ''" x-text="allLabel"></a>
             </li>
         </ul>
