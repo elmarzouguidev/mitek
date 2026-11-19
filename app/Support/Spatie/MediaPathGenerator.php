@@ -27,7 +27,7 @@ class MediaPathGenerator implements BasePathGenerator
         $date = $media->created_at ?? now();
         $prefix = config('media-library.prefix', '');
 
-        $path = $date->format('Y/m');
+        $path = $date->format('Y/m').'/'.$media->getKey();
 
         return $prefix ? rtrim($prefix, '/').'/'.$path : $path;
     }

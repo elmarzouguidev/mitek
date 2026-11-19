@@ -14,7 +14,7 @@ Installed and in use:
 - spatie/laravel-permission (roles `admin`, `customer`), laravel-settings (`App\Settings\*`), laravel-medialibrary, laravel-sitemap, laravel-sluggable, laravel-honeypot, laravel-phone, resend, mpdf/mpdf (invoices)
 
 Deliberately NOT used (decided with the owner; do not install): **Filament, Livewire, barryvdh/laravel-dompdf**.
-Still to build: PDF invoice generation (mPDF), Markdown mail templates, sitemap/JSON-LD, admin DataTable/Modal/FileUpload components.
+Still to build: PDF invoice generation (mPDF), Markdown mail templates, sitemap/JSON-LD. Admin component kit (DataTable, Modal, ConfirmDialog, FileUpload, ImageInput, TagInput...) exists in `resources/js/admin/Components`.
 Not wired yet: the existing 2FA services (`app/Services/Security`), planned for Phase 6.
 
 ## Common commands
@@ -36,6 +36,7 @@ Not wired yet: the existing 2FA services (`app/Services/Security`), planned for 
 - Quantity-based B2B price tiers per product, and a quote-request flow (from the cart; admin replies in the back office).
 - IT services are not sold through the cart: each service page has a request form handled in the admin.
 - Money: MAD (DH), VAT 20 % (setting), prices stored **HT as integer centimes**, displayed TTC. Use `App\Support\Money` and `App\Casts\MoneyCast`; never floats.
+- **All product prices go through `App\Services\Core\Product\PriceCalculator`** (quantity tiers, VAT, rounding). The storefront, the price JSON endpoint and the cart (Phase 3) must all use it. Lazy loading is disabled: eager load `priceTiers`, `media`, `brand` before pricing or rendering cards.
 
 ## Coding conventions
 
@@ -64,7 +65,7 @@ From `Mitek.md` and the project (placeholders live in settings, empty until the 
 
 ## Workflow rules
 
-1. Plan before coding; build phase by phase (Phase 1 foundations is done; next: 2 catalog, 3 cart/checkout/payment, 4 invoices/emails/customer area/quotes, 5 services/CMS/contact/SEO, 6 tests/performance/security).
+1. Plan before coding; build phase by phase (Phases 1 foundations and 2 catalog are done; next: 3 cart/checkout/payment, 4 invoices/emails/customer area/quotes, 5 services/CMS/contact/SEO, 6 tests/performance/security).
 2. At the end of each phase: run migrations and seeders, run `php artisan test`, run Pint, list the files changed, commit (with a message shown to the owner), then stop for review.
 3. Ask before anything hard to undo: schema shape, adding/removing packages, switching away from Vue/Inertia or Alpine.
 4. Follow the Boost guidelines below (activate the matching skills, use `search-docs` for version-specific APIs).

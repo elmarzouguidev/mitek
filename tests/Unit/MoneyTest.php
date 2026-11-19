@@ -27,8 +27,8 @@ it('does arithmetic without floating point drift', function () {
 });
 
 it('formats amounts in French with the dirham sign', function () {
-    expect(Money::fromCents(125050)->format())->toBe("1\u{202F}250,50 DH")
-        ->and((string) Money::zero())->toBe('0,00 DH');
+    expect(Money::fromCents(125050)->format())->toBe("1\u{202F}250,50\u{00A0}DH")
+        ->and((string) Money::zero())->toBe("0,00\u{00A0}DH");
 });
 
 it('compares against the cash on delivery limit', function () {

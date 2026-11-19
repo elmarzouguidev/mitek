@@ -6,31 +6,42 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->uuid()->unique();
 
-            $table->string('reference')->nullable();
-            $table->string('name');
-            $table->string('slug')->nullable();
-            $table->unsignedBigInteger('quantity')->nullable();
-            $table->longText('excerpt')->nullable();
-            $table->longText('description')->nullable();
-            $table->unsignedBigInteger('price_ht')->default(0);
+            $table->foreignId('category_id')->constrained()->restrictOnDelete();
+            $table->foreignId('brand_id')->nullable()->constrained()->nullOnDelete();
 
-            $table->activeFields();
+            $table->string('reference')->unique();
+            $table->string('name');
+            $table->string('slug')->unique();
+            $table->text('excerpt')->nullable();
+            $table->longText('description')->nullable();
+
+            $table->unsignedBigInteger('price_ht')->default(0);
+            $table->unsignedTinyInteger('vat_rate')->nullable();
+
+            $table->unsignedInteger('stock_quantity')->default(0);
+            $table->unsignedInteger('low_stock_threshold')->default(5);
+            $table->unsignedInteger('weight_grams')->default(0);
+
+            $table->boolean('is_active')->default(true);
+            $table->boolean('is_featured')->default(false);
+
+            $table->string('meta_title')->nullable();
+            $table->string('meta_description', 320)->nullable();
+
             $table->timestamps();
+            $table->softDeletes();
+
+            $table->index(['is_active', 'category_id']);
+            $table->index('is_featured');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('products');

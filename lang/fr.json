@@ -7,5 +7,13 @@
     "Hello!": "Bonjour,",
     "Regards": "Cordialement",
     "Whoops!": "Oups !",
-    "If you're having trouble clicking the \":actionText\" button, copy and paste the URL below\ninto your web browser:": "Si le bouton « :actionText » ne fonctionne pas, copiez et collez l'adresse ci-dessous dans votre navigateur :"
+    "If you're having trouble clicking the \":actionText\" button, copy and paste the URL below\ninto your web browser:": "Si le bouton « :actionText » ne fonctionne pas, copiez et collez l'adresse ci-dessous dans votre navigateur :",
+    "Showing": "Affichage de",
+    "to": "à",
+    "of": "sur",
+    "results": "résultats",
+    "Pagination Navigation": "Navigation de pagination",
+    "Go to page :page": "Aller à la page :page",
+    "pagination.previous": "Précédent",
+    "pagination.next": "Suivant"
 }

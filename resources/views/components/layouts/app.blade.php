@@ -48,8 +48,36 @@
             </button>
         </div>
 
+        <div class="border-t border-slate-100 bg-slate-50">
+            <div class="mx-auto max-w-7xl px-4 py-3 sm:px-6 lg:px-8">
+                <x-search-box />
+            </div>
+        </div>
+
+        @if ($menu !== [])
+            <nav class="hidden border-t border-slate-100 md:block" aria-label="Catégories">
+                <ul class="mx-auto flex max-w-7xl flex-wrap gap-x-6 px-4 sm:px-6 lg:px-8">
+                    @foreach ($menu as $root)
+                        <li class="relative" x-data="{ show: false }" @mouseenter="show = true" @mouseleave="show = false" @keydown.escape="show = false">
+                            <a href="{{ route('categories.show', $root['slug']) }}" class="block py-2.5 text-sm font-medium text-slate-700 hover:text-brand-700" @focus="show = true">{{ $root['name'] }}</a>
+                            @if ($root['children'] !== [])
+                                <ul x-cloak x-show="show" class="absolute left-0 top-full z-30 w-64 rounded-b-lg bg-white py-2 shadow-lg ring-1 ring-slate-200">
+                                    @foreach ($root['children'] as $child)
+                                        <li><a href="{{ route('categories.show', $child['slug']) }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-brand-50 hover:text-brand-800">{{ $child['name'] }}</a></li>
+                                    @endforeach
+                                </ul>
+                            @endif
+                        </li>
+                    @endforeach
+                </ul>
+            </nav>
+        @endif
+
         <nav x-cloak x-show="open" class="space-y-1 border-t border-slate-200 px-4 py-3 text-sm font-medium md:hidden" aria-label="Navigation mobile">
             <a href="{{ route('home') }}" class="block rounded-lg px-3 py-2 hover:bg-slate-100">{{ __('app.nav.home') }}</a>
+            @foreach ($menu as $root)
+                <a href="{{ route('categories.show', $root['slug']) }}" class="block rounded-lg px-3 py-2 hover:bg-slate-100">{{ $root['name'] }}</a>
+            @endforeach
             @auth
                 @if (auth()->user()->isAdmin())
                     <a href="{{ route('admin.dashboard') }}" class="block rounded-lg px-3 py-2 hover:bg-slate-100">{{ __('app.nav.admin') }}</a>

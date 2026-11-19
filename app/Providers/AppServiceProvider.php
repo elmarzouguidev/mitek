@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Services\Core\Product\CatalogMenu;
 use App\Settings\GeneralSettings;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
@@ -68,6 +69,7 @@ class AppServiceProvider extends ServiceProvider
     {
         View::composer('components.layouts.app', function ($view): void {
             $view->with('site', app(GeneralSettings::class));
+            $view->with('menu', app(CatalogMenu::class)->tree());
         });
     }
 
