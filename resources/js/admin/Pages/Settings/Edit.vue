@@ -23,6 +23,13 @@ const generalForm = useForm({
     ice: props.general.ice ?? '',
     if_number: props.general.if_number ?? '',
     rc_number: props.general.rc_number ?? '',
+    tp_number: props.general.tp_number ?? '',
+    cnss_number: props.general.cnss_number ?? '',
+    legal_form: props.general.legal_form,
+    share_capital: props.general.share_capital ?? '',
+    registered_address: props.general.registered_address ?? '',
+    city: props.general.city,
+    admin_notification_email: props.general.admin_notification_email,
 });
 
 const paymentForm = useForm({
@@ -79,10 +86,31 @@ const shippingForm = useForm({
                     <FormField label="Registre de commerce (RC)" for="rc_number" :error="generalForm.errors.rc_number">
                         <TextInput id="rc_number" v-model="generalForm.rc_number" :invalid="!!generalForm.errors.rc_number" />
                     </FormField>
+                    <FormField label="Patente (TP)" for="tp_number" :error="generalForm.errors.tp_number">
+                        <TextInput id="tp_number" v-model="generalForm.tp_number" :invalid="!!generalForm.errors.tp_number" />
+                    </FormField>
+                    <FormField label="CNSS" for="cnss_number" :error="generalForm.errors.cnss_number">
+                        <TextInput id="cnss_number" v-model="generalForm.cnss_number" :invalid="!!generalForm.errors.cnss_number" />
+                    </FormField>
+                    <FormField label="Forme juridique" for="legal_form" :error="generalForm.errors.legal_form">
+                        <TextInput id="legal_form" v-model="generalForm.legal_form" :invalid="!!generalForm.errors.legal_form" />
+                    </FormField>
+                    <FormField label="Capital social" for="share_capital" hint="Ex. 10 000 DH" :error="generalForm.errors.share_capital">
+                        <TextInput id="share_capital" v-model="generalForm.share_capital" :invalid="!!generalForm.errors.share_capital" />
+                    </FormField>
+                    <FormField class="sm:col-span-2" label="Siège social" for="registered_address" hint="Si différent de l'adresse ci-dessous." :error="generalForm.errors.registered_address">
+                        <TextInput id="registered_address" v-model="generalForm.registered_address" :invalid="!!generalForm.errors.registered_address" />
+                    </FormField>
+                    <FormField label="Ville" for="city" :error="generalForm.errors.city">
+                        <TextInput id="city" v-model="generalForm.city" :invalid="!!generalForm.errors.city" />
+                    </FormField>
+                    <FormField label="Email de notification admin" for="admin_notification_email" hint="Nouvelles commandes, justificatifs, devis, demandes de service et messages." :error="generalForm.errors.admin_notification_email">
+                        <TextInput id="admin_notification_email" type="email" v-model="generalForm.admin_notification_email" :invalid="!!generalForm.errors.admin_notification_email" />
+                    </FormField>
                     <FormField class="sm:col-span-2" label="Adresse" for="address" :error="generalForm.errors.address">
                         <TextInput id="address" v-model="generalForm.address" :invalid="!!generalForm.errors.address" />
                     </FormField>
-                    <FormField class="sm:col-span-2" label="Lien d'intégration Google Maps" for="maps_embed_url" :error="generalForm.errors.maps_embed_url">
+                    <FormField class="sm:col-span-2" label="Lien d'intégration Google Maps" hint="https://www.google.com/maps/embed… (laisser vide pour masquer la carte)" for="maps_embed_url" :error="generalForm.errors.maps_embed_url">
                         <TextInput id="maps_embed_url" v-model="generalForm.maps_embed_url" :invalid="!!generalForm.errors.maps_embed_url" />
                     </FormField>
                 </div>

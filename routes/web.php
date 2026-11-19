@@ -5,6 +5,7 @@ use App\Http\Controllers\Account\DashboardController as AccountDashboardControll
 use App\Http\Controllers\Account\OrderController as AccountOrderController;
 use App\Http\Controllers\Account\ProfileController;
 use App\Http\Controllers\Account\QuoteController as AccountQuoteController;
+use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -13,6 +14,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Storefront\CartController;
 use App\Http\Controllers\Storefront\CategoryController;
 use App\Http\Controllers\Storefront\CheckoutController;
+use App\Http\Controllers\Storefront\CreditNoteController;
 use App\Http\Controllers\Storefront\InvoiceController;
 use App\Http\Controllers\Storefront\OrderController;
 use App\Http\Controllers\Storefront\ProductController;
@@ -47,6 +49,7 @@ Route::get('devis/{quote:uuid}', [QuoteController::class, 'show'])->middleware(E
 Route::middleware(EnsureOrderAccess::class)->group(function (): void {
     Route::get('commande/{order:uuid}', [OrderController::class, 'show'])->name('orders.show');
     Route::get('commande/{order:uuid}/facture', [InvoiceController::class, 'show'])->name('orders.invoice');
+    Route::get('commande/{order:uuid}/avoir', [CreditNoteController::class, 'show'])->name('orders.credit-note');
     Route::post('commande/{order:uuid}/justificatif', [OrderController::class, 'storeProof'])->middleware('throttle:20,1')->name('orders.proof.store');
 });
 
@@ -77,4 +80,10 @@ Route::middleware('auth')->prefix('compte')->name('account.')->group(function ()
     Route::get('informations', [ProfileController::class, 'edit'])->name('profile');
     Route::put('informations', [ProfileController::class, 'update'])->name('profile.update');
     Route::put('mot-de-passe', [ProfileController::class, 'updatePassword'])->name('password.update');
+});
+
+Route::middleware('auth')->group(function (): void {
+    Route::get('email/verification', [EmailVerificationController::class, 'notice'])->name('verification.notice');
+    Route::get('email/verification/{id}/{hash}', [EmailVerificationController::class, 'verify'])->middleware(['signed', 'throttle:6,1'])->name('verification.verify');
+    Route::post('email/verification/envoyer', [EmailVerificationController::class, 'send'])->middleware('throttle:6,1')->name('verification.send');
 });

@@ -71,6 +71,12 @@
             </p>
         @endif
 
+        @if ($creditNoteUrl)
+            <p class="mt-3">
+                <a href="{{ $creditNoteUrl }}" target="_blank" rel="noopener" class="inline-flex items-center rounded-lg px-4 py-2 text-sm font-semibold text-red-700 ring-1 ring-inset ring-red-200 hover:bg-red-50">{{ __('orders.show.credit_note', ['number' => $order->creditNote->number]) }}</a>
+            </p>
+        @endif
+
         @if ($order->tracking_number)
             <section class="mt-6 rounded-xl p-5 ring-1 ring-slate-200">
                 <h2 class="font-semibold text-brand-900">{{ __('orders.show.tracking') }}</h2>

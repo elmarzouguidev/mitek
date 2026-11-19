@@ -11,6 +11,7 @@ use App\Models\Core\Order\Order;
 use App\Models\Core\Order\OrderStatusHistory;
 use App\Models\Core\Product\Product;
 use App\Models\User\User;
+use App\Services\Core\Invoice\IssueCreditNote;
 use App\Services\Core\Invoice\IssueInvoice;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -21,7 +22,10 @@ use Illuminate\Validation\ValidationException;
  */
 class TransitionOrderStatus
 {
-    public function __construct(private readonly IssueInvoice $invoices) {}
+    public function __construct(
+        private readonly IssueInvoice $invoices,
+        private readonly IssueCreditNote $creditNotes,
+    ) {}
 
     /**
      * @param  array{tracking_number?: string|null, tracking_carrier?: string|null}  $attributes
@@ -50,6 +54,7 @@ class TransitionOrderStatus
 
             if ($to === OrderStatus::Cancelled) {
                 $this->restock($order);
+                $this->creditNotes->handle($order);
             }
 
             if ($to === OrderStatus::Delivered && $order->isCashOnDelivery()) {

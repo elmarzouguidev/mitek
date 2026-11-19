@@ -29,17 +29,7 @@ class IssueInvoice
                 'order_id' => $order->id,
                 'number' => $this->nextNumber($issuedAt->year),
                 'issued_at' => $issuedAt,
-                'seller' => [
-                    'name' => $this->settings->legal_name,
-                    'site' => $this->settings->site_name,
-                    'address' => $this->settings->address,
-                    'email' => $this->settings->email,
-                    'phone' => $this->settings->phone,
-                    'ice' => $this->settings->ice,
-                    'if' => $this->settings->if_number,
-                    'rc' => $this->settings->rc_number,
-                    'vat_rate' => $this->settings->vat_rate,
-                ],
+                'seller' => $this->sellerSnapshot($this->settings),
             ]);
         });
     }
@@ -57,5 +47,30 @@ class IssueInvoice
         DB::table('invoice_sequences')->where('year', $year)->update(['last_number' => $next]);
 
         return sprintf('FA-%d-%05d', $year, $next);
+    }
+
+    /**
+     * Seller details frozen on every fiscal document (invoice, credit note).
+     *
+     * @return array<string, mixed>
+     */
+    public static function sellerSnapshot(GeneralSettings $settings): array
+    {
+        return [
+            'name' => $settings->legal_name,
+            'site' => $settings->site_name,
+            'legal_form' => $settings->legal_form,
+            'share_capital' => $settings->share_capital,
+            'address' => $settings->address,
+            'registered_address' => $settings->registered_address,
+            'email' => $settings->email,
+            'phone' => $settings->phone,
+            'ice' => $settings->ice,
+            'if' => $settings->if_number,
+            'rc' => $settings->rc_number,
+            'tp' => $settings->tp_number,
+            'cnss' => $settings->cnss_number,
+            'vat_rate' => $settings->vat_rate,
+        ];
     }
 }

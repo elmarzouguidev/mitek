@@ -35,6 +35,9 @@ Not wired yet: the existing 2FA services (`app/Services/Security`), planned for 
 - Shipping within 2 days of payment validation; admin sets the tracking number (required unless the customer uses their own carrier). Cost = zone of the typed city (unmapped cities use the default zone) + weight bracket, from the admin "Livraison" screen (`ShippingCalculator`). Own carrier = note + `ShippingSettings::own_carrier_fee_cents`.
 - Every order gets a detailed PDF invoice: issued once, when the payment is validated (cash on delivery: when the admin confirms), numbered `FA-YYYY-00001` without gaps per year (`IssueInvoice`), seller details snapshotted at issue time, PDF rendered on demand by mPDF (`InvoicePdf`) and cached on the private disk. B2B customers have company name, **ICE, IF, RC**, shown on the invoice. Mitek's own ICE/IF/RC live in `GeneralSettings` (admin > Paramètres).
 - Emails (French Markdown mailables in `app/Mail`, views in `resources/views/mail`) are sent by queued after-commit listeners on `OrderPlaced`, `OrderStatusChanged` and `QuoteReplied`: order received, proof received, payment validated (invoice attached) or COD confirmed, proof rejected, shipped, quote replied. **A queue worker must run** (`composer run dev` does) or nothing is sent.
+- Cancelling an invoiced order issues a credit note `AV-YYYY-00001` (`IssueCreditNote`: full reversal, negative amounts, VAT breakdown, seller snapshot, own gapless yearly sequence) and emails the customer (`OrderCancelledMail`, credit note attached). Issued invoices and credit notes are immutable (`IsIssuedDocument`: no edit, no delete, FK `restrict`). Fiscal documents print the seller's ICE, IF, RC, TP, CNSS, legal form, capital and registered address from `GeneralSettings`, with `[À COMPLÉTER]` for any empty one.
+- Admin notifications (queued, `NotifyAdmin`): new order, proof to validate, new quote request (later: service requests and contact messages) go to the `admin_notification_email` setting (default `contact@mitek.ma`).
+- Guest orders are attached to an account only once its email is **verified** (`LinkGuestOrders`, on the `Verified`/`Registered` events): linking by an unverified address would expose someone else's orders.
 - Customer area `/compte` (orders, invoices, quotes, addresses, profile with company details); checkout is pre-filled from it. Quote requests (`/devis`) are built from the cart; the admin answers in the back office and the customer is emailed a signed link.
 - Quantity-based B2B price tiers per product, and a quote-request flow (from the cart; admin replies in the back office).
 - IT services are not sold through the cart: each service page has a request form handled in the admin.
@@ -67,6 +70,16 @@ From `Mitek.md` and the project (placeholders live in settings, empty until the 
 - Legal pages text (mentions légales, CGV, confidentialité), return policy, customer-service hours
 - B2B price-tier rules/discounts, real product catalogue beyond the examples in `Mitek.md`, product images
 - Wording for quote requests and service request emails (not covered in `Mitek.md`)
+- **Priced quotes** (DV numbering, PDF, customer accepts → order): not built; quote replies are text only for now
+- Mitek's TP, CNSS, share capital and registered address (fields exist in Paramètres, empty until supplied)
+
+## Mail deliverability (set at deploy, for mitek.ma)
+
+Mail uses the `log` driver until deploy (Resend later). Before sending real email, add these DNS records for `mitek.ma`; the exact values come from the mail provider's dashboard:
+- **SPF**: one `TXT` record on the sending domain (or the provider's return-path subdomain), e.g. `v=spf1 include:<provider> ~all`. Only one SPF record per name.
+- **DKIM**: the `TXT`/`CNAME` record(s) the provider gives (selector `<selector>._domainkey.mitek.ma`). Enable signing and verify the domain in the dashboard.
+- **DMARC**: `TXT` on `_dmarc.mitek.ma`, start with `v=DMARC1; p=none; rua=mailto:<mailbox>` to collect reports, then tighten to `p=quarantine` and later `p=reject` once SPF and DKIM align.
+- Set `MAIL_MAILER`, `MAIL_FROM_ADDRESS=contact@mitek.ma` and the provider key in the production `.env`, and keep a **queue worker** running (all emails are queued).
 
 ## Workflow rules
 

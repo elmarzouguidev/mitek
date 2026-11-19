@@ -91,6 +91,7 @@ class OrderDetailResource extends JsonResource
                 ->map(fn (OrderStatus $status): array => ['value' => $status->value, 'label' => $status->label()])
                 ->values(),
             'accepts_proof' => $this->acceptsProof(),
+            'credit_note' => $this->creditNote ? ['number' => $this->creditNote->number, 'total' => $this->creditNote->total_ttc->format(), 'url' => route('admin.orders.credit-note', $this->resource)] : null,
             'invoice' => $this->invoice ? ['number' => $this->invoice->number, 'url' => route('admin.orders.invoice', $this->resource)] : null,
         ];
     }

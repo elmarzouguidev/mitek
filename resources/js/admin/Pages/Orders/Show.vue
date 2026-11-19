@@ -172,6 +172,10 @@ const actionLabels = {
                 <a :href="order.invoice.url" target="_blank" rel="noopener" class="text-sm font-medium text-brand-700 hover:underline">Télécharger {{ order.invoice.number }} (PDF)</a>
             </Card>
 
+            <Card v-if="order.credit_note" title="Avoir">
+                <a :href="order.credit_note.url" target="_blank" rel="noopener" class="text-sm font-medium text-red-700 hover:underline">Télécharger {{ order.credit_note.number }} ({{ order.credit_note.total }})</a>
+            </Card>
+
             <Card title="Client">
                 <p class="font-medium">{{ order.contact.name }}</p>
                 <p class="text-sm text-slate-600">{{ order.contact.email }}<br />{{ order.contact.phone }}</p>

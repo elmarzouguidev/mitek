@@ -14,6 +14,16 @@
     <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <h1 class="text-3xl font-bold tracking-tight text-brand-900">{{ __('account.title') }}</h1>
 
+        @unless (auth()->user()->hasVerifiedEmail())
+            <div class="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-900 ring-1 ring-amber-200" role="status">
+                <span>{{ __('account.verification.banner') }}</span>
+                <form method="POST" action="{{ route('verification.send') }}">
+                    @csrf
+                    <button type="submit" class="font-semibold underline hover:no-underline">{{ __('account.verification.banner_action') }}</button>
+                </form>
+            </div>
+        @endunless
+
         <div class="mt-6 grid gap-8 lg:grid-cols-[14rem_1fr]">
             <nav aria-label="{{ __('account.title') }}" class="flex gap-1 overflow-x-auto lg:flex-col">
                 @foreach ($items as $key => [$route, $label])

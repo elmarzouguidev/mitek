@@ -15,5 +15,10 @@
     "Pagination Navigation": "Navigation de pagination",
     "Go to page :page": "Aller à la page :page",
     "pagination.previous": "Précédent",
-    "pagination.next": "Suivant"
+    "pagination.next": "Suivant",
+    "Verify Email Address": "Confirmer mon adresse email",
+    "Please click the button below to verify your email address.": "Cliquez sur le bouton ci-dessous pour confirmer votre adresse email.",
+    "If you did not create an account, no further action is required.": "Si vous n'avez pas créé de compte, aucune action n'est requise.",
+    "Verify your email address": "Confirmez votre adresse email",
+    "Reset your password": "Réinitialisation du mot de passe"
 }

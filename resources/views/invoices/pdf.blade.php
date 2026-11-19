@@ -28,15 +28,7 @@
     <table class="meta">
         <tr>
             <td style="width: 55%;">
-                <img src="{{ $logo }}" alt="{{ $seller['site'] ?? 'Mitek.ma' }}" style="height: 48px;"><br><br>
-                <strong>{{ $seller['name'] }}</strong><br>
-                {{ $seller['address'] }}<br>
-                {{ $seller['email'] }}@if (! empty($seller['phone'])) · {{ $seller['phone'] }}@endif<br>
-                <span class="muted">
-                    ICE : @if (! empty($seller['ice'])){{ $seller['ice'] }}@else<span class="todo">[À COMPLÉTER]</span>@endif ·
-                    IF : @if (! empty($seller['if'])){{ $seller['if'] }}@else<span class="todo">[À COMPLÉTER]</span>@endif ·
-                    RC : @if (! empty($seller['rc'])){{ $seller['rc'] }}@else<span class="todo">[À COMPLÉTER]</span>@endif
-                </span>
+                @include('invoices.partials.seller')
             </td>
             <td style="width: 45%;" class="r">
                 <h1>FACTURE</h1>
@@ -135,8 +127,6 @@
     </table>
 
     <br><br>
-    <div class="footer">
-        {{ $seller['name'] }} · {{ $seller['address'] }} · {{ $seller['email'] }}
-    </div>
+    @include('invoices.partials.legal-footer')
 </body>
 </html>

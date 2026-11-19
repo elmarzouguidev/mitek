@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\OrderCreditNoteController;
 use App\Http\Controllers\Admin\OrderInvoiceController;
 use App\Http\Controllers\Admin\OrderPaymentController;
 use App\Http\Controllers\Admin\OrderStatusController;
@@ -33,6 +34,7 @@ Route::delete('produits/{product}/images/{media}', [ProductImageController::clas
 Route::get('commandes', [OrderController::class, 'index'])->name('orders.index');
 Route::get('commandes/{order}', [OrderController::class, 'show'])->name('orders.show');
 Route::get('commandes/{order}/facture', [OrderInvoiceController::class, 'show'])->name('orders.invoice');
+Route::get('commandes/{order}/avoir', [OrderCreditNoteController::class, 'show'])->name('orders.credit-note');
 Route::put('commandes/{order}/statut', [OrderStatusController::class, 'update'])->name('orders.status');
 Route::post('commandes/{order}/justificatifs', [OrderPaymentController::class, 'storeProof'])->name('orders.proofs.store');
 Route::get('paiements/{payment}/justificatifs/{media}', [OrderPaymentController::class, 'showProof'])->name('orders.proofs.show');

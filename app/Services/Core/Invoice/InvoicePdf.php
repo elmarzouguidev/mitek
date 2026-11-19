@@ -7,14 +7,14 @@ use App\Models\Core\Order\OrderItem;
 use App\Support\Money;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\View;
-use Mpdf\Mpdf;
-use Mpdf\Output\Destination;
 
 /**
  * Renders an invoice to PDF with mPDF and caches the file on the private disk.
  */
 class InvoicePdf
 {
+    public function __construct(private readonly PdfRenderer $renderer) {}
+
     /**
      * PDF bytes; rendered on first use, then served from the cache.
      */
@@ -50,26 +50,7 @@ class InvoicePdf
 
     private function render(Invoice $invoice): string
     {
-        $html = $this->html($invoice);
-
-        $tempDir = storage_path('app/mpdf');
-        is_dir($tempDir) || mkdir($tempDir, 0775, true);
-
-        $mpdf = new Mpdf([
-            'mode' => 'utf-8',
-            'format' => 'A4',
-            'margin_left' => 14,
-            'margin_right' => 14,
-            'margin_top' => 14,
-            'margin_bottom' => 18,
-            'tempDir' => $tempDir,
-            'default_font' => 'dejavusans',
-        ]);
-        $mpdf->SetTitle($invoice->number);
-        $mpdf->SetCreator((string) ($invoice->seller['site'] ?? 'Mitek.ma'));
-        $mpdf->WriteHTML($html);
-
-        return $mpdf->Output('', Destination::STRING_RETURN);
+        return $this->renderer->render($this->html($invoice), $invoice->number, (string) ($invoice->seller['site'] ?? 'Mitek.ma'));
     }
 
     /**

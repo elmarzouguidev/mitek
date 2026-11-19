@@ -6,6 +6,7 @@ use App\Casts\MoneyCast;
 use App\Enums\CarrierMode;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentMethod;
+use App\Models\Core\Invoice\CreditNote;
 use App\Models\Core\Invoice\Invoice;
 use App\Models\Core\Shipping\ShippingZone;
 use App\Models\User\User;
@@ -68,6 +69,14 @@ class Order extends Model
     public function invoice(): HasOne
     {
         return $this->hasOne(Invoice::class);
+    }
+
+    /**
+     * @return HasOne<CreditNote, $this>
+     */
+    public function creditNote(): HasOne
+    {
+        return $this->hasOne(CreditNote::class);
     }
 
     /**

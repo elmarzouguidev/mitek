@@ -19,13 +19,14 @@ class OrderController extends Controller
 {
     public function show(Order $order, PaymentSettings $payment, GeneralSettings $general): View
     {
-        $order->load(['items', 'payments.media', 'history', 'invoice']);
+        $order->load(['items', 'payments.media', 'history', 'invoice', 'creditNote']);
 
         return view('orders.show', [
             'order' => $order,
             'payment' => $payment,
             'general' => $general,
             'proofUrl' => URL::signedRoute('orders.proof.store', $order),
+            'creditNoteUrl' => $order->creditNote ? URL::signedRoute('orders.credit-note', $order) : null,
             'invoiceUrl' => $order->invoice ? URL::signedRoute('orders.invoice', $order) : null,
         ]);
     }

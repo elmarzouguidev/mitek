@@ -6,6 +6,18 @@ use App\Settings\PaymentSettings;
 use App\Settings\ShippingSettings;
 use Inertia\Testing\AssertableInertia as Assert;
 
+/**
+ * @param  array<string, mixed>  $overrides
+ * @return array<string, mixed>
+ */
+function generalSettingsPayload(array $overrides = []): array
+{
+    return array_merge([
+        'site_name' => 'Mitek.ma', 'legal_name' => 'STE MITEK SARL AU', 'legal_form' => 'SARL AU', 'email' => 'contact@mitek.ma',
+        'address' => 'Casablanca, Maroc', 'city' => 'Casablanca', 'vat_rate' => 20, 'admin_notification_email' => 'contact@mitek.ma',
+    ], $overrides);
+}
+
 beforeEach(function () {
     $this->admin = User::factory()->admin()->create();
 });
@@ -24,16 +36,11 @@ it('exposes the default settings from the content brief', function () {
 
 it('updates the general settings', function () {
     $this->actingAs($this->admin)
-        ->put(route('admin.settings.general'), [
-            'site_name' => 'Mitek.ma',
-            'legal_name' => 'STE MITEK SARL AU',
-            'email' => 'contact@mitek.ma',
+        ->put(route('admin.settings.general'), generalSettingsPayload([
             'phone' => '0522 11 22 33',
             'whatsapp' => '212600000000',
-            'address' => 'Casablanca, Maroc',
             'maps_embed_url' => 'https://www.google.com/maps/embed?pb=test',
-            'vat_rate' => 20,
-        ])
+        ]))
         ->assertRedirect()
         ->assertSessionHas('success');
 
@@ -95,17 +102,39 @@ it('forbids customers from changing settings', function () {
 
 it('stores the company identifiers printed on invoices', function () {
     $this->actingAs($this->admin)
-        ->put(route('admin.settings.general'), [
-            'site_name' => 'Mitek.ma', 'legal_name' => 'STE MITEK SARL AU', 'email' => 'contact@mitek.ma', 'address' => 'Casablanca, Maroc', 'vat_rate' => 20,
+        ->put(route('admin.settings.general'), generalSettingsPayload([
             'ice' => '001234567000089', 'if_number' => '12345678', 'rc_number' => '98765',
-        ])->assertSessionHasNoErrors();
+        ]))->assertSessionHasNoErrors();
 
     expect(app(GeneralSettings::class))->ice->toBe('001234567000089')->if_number->toBe('12345678')->rc_number->toBe('98765');
 });
 
 it('validates the ICE', function () {
     $this->actingAs($this->admin)
-        ->put(route('admin.settings.general'), [
-            'site_name' => 'Mitek.ma', 'legal_name' => 'STE MITEK SARL AU', 'email' => 'contact@mitek.ma', 'address' => 'Casablanca', 'vat_rate' => 20, 'ice' => '123',
-        ])->assertSessionHasErrors('ice');
+        ->put(route('admin.settings.general'), generalSettingsPayload(['ice' => '123']))->assertSessionHasErrors('ice');
+});
+
+it('stores the fiscal details and the notification address', function () {
+    $this->actingAs($this->admin)
+        ->put(route('admin.settings.general'), generalSettingsPayload([
+            'tp_number' => '12345678', 'cnss_number' => '7654321', 'share_capital' => '10 000 DH', 'registered_address' => '1 rue du Siège, Casablanca',
+            'admin_notification_email' => 'ops@mitek.ma',
+        ]))->assertSessionHasNoErrors();
+
+    expect(app(GeneralSettings::class))
+        ->tp_number->toBe('12345678')->cnss_number->toBe('7654321')->share_capital->toBe('10 000 DH')
+        ->registered_address->toBe('1 rue du Siège, Casablanca')->admin_notification_email->toBe('ops@mitek.ma')
+        ->legal_form->toBe('SARL AU')->city->toBe('Casablanca');
+});
+
+it('only accepts Google Maps embed links', function () {
+    $this->actingAs($this->admin)
+        ->put(route('admin.settings.general'), generalSettingsPayload(['maps_embed_url' => 'https://evil.example/phish']))
+        ->assertSessionHasErrors('maps_embed_url');
+});
+
+it('requires a valid notification email', function () {
+    $this->actingAs($this->admin)
+        ->put(route('admin.settings.general'), generalSettingsPayload(['admin_notification_email' => 'nope']))
+        ->assertSessionHasErrors('admin_notification_email');
 });

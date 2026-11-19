@@ -9,6 +9,16 @@ return [
         'addresses' => 'Mes adresses',
         'profile' => 'Mes informations',
     ],
+    'verification' => [
+        'title' => 'Confirmez votre adresse email',
+        'intro' => 'Nous avons envoyé un lien de confirmation à :email. Une fois votre adresse confirmée, vos commandes passées avec cette adresse apparaissent dans votre compte.',
+        'resend' => 'Renvoyer l\'email',
+        'sent' => 'Un nouvel email de confirmation vient de partir.',
+        'done' => 'Adresse email confirmée. Vos commandes passées avec cette adresse sont rattachées à votre compte.',
+        'after_register' => 'Compte créé. Un email de confirmation vous a été envoyé : confirmez votre adresse pour retrouver vos commandes passées.',
+        'banner' => 'Votre adresse email n\'est pas confirmée.',
+        'banner_action' => 'Envoyer le lien de confirmation',
+    ],
     'overview' => [
         'welcome' => 'Bonjour :name',
         'recent_orders' => 'Dernières commandes',

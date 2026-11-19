@@ -134,6 +134,7 @@ return [
         'dispatch' => 'Expédition sous :days jours après validation du paiement.',
         'cancelled_info' => 'Cette commande a été annulée.',
         'invoice' => 'Télécharger la facture :number (PDF)',
+        'credit_note' => 'Télécharger l\'avoir :number (PDF)',
         'contact' => 'Une question ? Écrivez-nous à :email.',
     ],
 ];

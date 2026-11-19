@@ -2,6 +2,7 @@
 
 namespace App\Models\Core\Invoice;
 
+use App\Models\Concerns\IsIssuedDocument;
 use App\Models\Core\Order\Order;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,6 +14,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class Invoice extends Model
 {
+    use IsIssuedDocument;
+
     public const DISK = 'local';
 
     /**

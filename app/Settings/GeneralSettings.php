@@ -33,6 +33,25 @@ class GeneralSettings extends Settings
 
     public ?string $rc_number;
 
+    /** TODO: patente (taxe professionnelle) number, not provided yet. */
+    public ?string $tp_number;
+
+    /** TODO: CNSS affiliation number, not provided yet. */
+    public ?string $cnss_number;
+
+    public string $legal_form;
+
+    /** TODO: share capital (e.g. "10 000 DH"), not provided yet. */
+    public ?string $share_capital;
+
+    /** TODO: registered address when different from the trading address. */
+    public ?string $registered_address;
+
+    public string $city;
+
+    /** Where admin notifications (new order, proof, quote, service request, contact message) are sent. */
+    public string $admin_notification_email;
+
     public static function group(): string
     {
         return 'general';

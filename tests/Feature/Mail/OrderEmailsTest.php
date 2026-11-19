@@ -5,6 +5,7 @@ use App\Enums\PaymentMethod;
 use App\Listeners\SendOrderReceivedEmail;
 use App\Listeners\SendOrderStatusEmail;
 use App\Listeners\SendQuoteRepliedEmail;
+use App\Mail\AdminNotificationMail;
 use App\Mail\OrderReceivedMail;
 use App\Mail\OrderShippedMail;
 use App\Mail\PaymentProofReceivedMail;
@@ -53,7 +54,7 @@ it('sends the order received email after checkout, with the payment instructions
 
         return $mail->hasTo('sara@example.com') && $mail->order->is($order);
     });
-    Mail::assertSentCount(1);
+    Mail::assertSent(OrderReceivedMail::class, 1);
 });
 
 it('adapts the payment paragraph to the method', function (PaymentMethod $method, string $expected) {
@@ -73,7 +74,7 @@ it('sends the proof received email when the customer uploads a proof', function 
     $this->post(URL::signedRoute('orders.proof.store', $order), ['proofs' => [UploadedFile::fake()->image('slip.jpg')]]);
 
     Mail::assertSent(PaymentProofReceivedMail::class, fn (PaymentProofReceivedMail $mail) => $mail->hasTo('sara@example.com') && $mail->order->is($order));
-    Mail::assertSentCount(1);
+    Mail::assertSent(PaymentProofReceivedMail::class, 1);
 });
 
 it('sends the payment validated email with the invoice attached', function () {
@@ -146,8 +147,6 @@ it('sends nothing for the other transitions', function (OrderStatus $from, Order
 })->with([
     'paid to processing' => [OrderStatus::Paid, OrderStatus::Processing],
     'shipped to delivered' => [OrderStatus::Shipped, OrderStatus::Delivered],
-    'paid to cancelled' => [OrderStatus::Paid, OrderStatus::Cancelled],
-    'pending to cancelled' => [OrderStatus::PendingPayment, OrderStatus::Cancelled],
 ]);
 
 it('sends nothing when a transition is refused', function () {
@@ -178,7 +177,8 @@ it('sends one email per milestone through the whole life of a prepaid order', fu
         ->and($sent(PaymentProofReceivedMail::class))->toBe(1)
         ->and($sent(PaymentValidatedMail::class))->toBe(1)
         ->and($sent(OrderShippedMail::class))->toBe(1)
-        ->and(Mail::sent(Mailable::class)->count())->toBe(4);
+        ->and(Mail::sent(AdminNotificationMail::class)->count())->toBe(2) // new order, proof to validate
+        ->and(Mail::sent(Mailable::class)->count())->toBe(6);
 });
 
 it('queues every email listener and sends it only after the transaction commits', function (string $class) {

@@ -153,7 +153,8 @@ describe('content', function () {
     it('flags missing company identifiers instead of inventing them', function () {
         $html = app(InvoicePdf::class)->html(payOrder(submittedPrepaidOrder())->invoice()->firstOrFail());
 
-        expect(substr_count($html, '[À COMPLÉTER]'))->toBe(3);
+        expect(substr_count($html, '[À COMPLÉTER]'))->toBe(9) // header: ICE, IF, RC; footer: capital, RC, IF, ICE, TP, CNSS
+            ->and($html)->toContain('SARL AU')->toContain('Casablanca, Maroc');
     });
 
     it('shows a consumer as the buyer when there is no company', function () {

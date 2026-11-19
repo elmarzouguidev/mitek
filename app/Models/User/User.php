@@ -2,8 +2,6 @@
 
 namespace App\Models\User;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-
 use App\Enums\UserRole;
 use App\Models\Core\Customer\Address;
 use App\Models\Core\Customer\CustomerProfile;
@@ -13,6 +11,7 @@ use App\Traits\HasTrustedTwoFactorDevices;
 use App\Traits\HasTwoFactorAuthentication;
 use App\Traits\UuidGenerator;
 use Database\Factories\UserFactory;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -24,7 +23,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 #[Fillable(['name', 'email', 'password'])]
 #[Hidden(['password', 'remember_token', 'two_factor_secret', 'two_factor_recovery_codes', 'two_factor_confirmed_at'])]
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, HasRoles, HasTrustedTwoFactorDevices, HasTwoFactorAuthentication, Notifiable, UuidGenerator;

@@ -3,6 +3,7 @@
 namespace App\Services\Core\Quote;
 
 use App\Enums\QuoteStatus;
+use App\Events\QuoteRequested;
 use App\Http\Requests\QuoteRequestForm;
 use App\Models\Core\Quote\QuoteRequest;
 use App\Models\User\User;
@@ -34,7 +35,7 @@ class SubmitQuoteRequest
             throw ValidationException::withMessages(['cart' => __('orders.errors.empty_cart')]);
         }
 
-        return DB::transaction(function () use ($data, $user, $summary): QuoteRequest {
+        $quote = DB::transaction(function () use ($data, $user, $summary): QuoteRequest {
             $quote = QuoteRequest::create([
                 'reference' => $this->uniqueReference(),
                 'user_id' => $user?->id,
@@ -59,6 +60,10 @@ class SubmitQuoteRequest
 
             return $quote;
         });
+
+        QuoteRequested::dispatch($quote);
+
+        return $quote;
     }
 
     /**

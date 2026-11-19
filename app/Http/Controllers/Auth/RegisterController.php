@@ -28,6 +28,6 @@ class RegisterController extends Controller
         Auth::login($user);
         $request->session()->regenerate();
 
-        return redirect()->route('home');
+        return redirect()->route('home')->with('success', __('account.verification.after_register'));
     }
 }

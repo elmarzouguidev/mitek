@@ -4,6 +4,7 @@ namespace App\Listeners;
 
 use App\Enums\OrderStatus;
 use App\Events\OrderStatusChanged;
+use App\Mail\OrderCancelledMail;
 use App\Mail\OrderShippedMail;
 use App\Mail\PaymentProofReceivedMail;
 use App\Mail\PaymentRejectedMail;
@@ -14,7 +15,7 @@ use Illuminate\Support\Facades\Mail;
 
 /**
  * One email per milestone the customer cares about: proof received, payment validated (or order
- * confirmed for cash on delivery), proof rejected, order shipped.
+ * confirmed for cash on delivery), proof rejected, order shipped, order cancelled (with the credit note when there is one).
  */
 class SendOrderStatusEmail implements ShouldQueue
 {
@@ -30,6 +31,7 @@ class SendOrderStatusEmail implements ShouldQueue
             $event->to === OrderStatus::Processing && $order->isCashOnDelivery() => new PaymentValidatedMail($order),
             $event->to === OrderStatus::PendingPayment && $event->from === OrderStatus::PaymentSubmitted => new PaymentRejectedMail($order, (string) $event->note),
             $event->to === OrderStatus::Shipped => new OrderShippedMail($order),
+            $event->to === OrderStatus::Cancelled => new OrderCancelledMail($order),
             default => null,
         };
 
